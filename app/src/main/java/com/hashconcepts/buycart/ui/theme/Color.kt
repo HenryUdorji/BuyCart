@@ -2,7 +2,9 @@ package com.hashconcepts.buycart.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val primary = Color(0xFFFFBD5A)
+val secondary = Color(0xFF000000)
+val success = Color(0xFF38C976)
+val error = Color(0xFFFF6262)
+val warning = Color(0xFFFFBD5A)
+val disable = Color(0xFFB3B8C5)
