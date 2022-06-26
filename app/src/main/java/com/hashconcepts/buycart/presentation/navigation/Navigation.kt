@@ -1,13 +1,14 @@
 package com.hashconcepts.buycart.presentation.navigation
 
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import androidx.navigation.Navigation
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.presentation.screens.auth.onboarding.OnBoardingScreen
 import com.hashconcepts.buycart.presentation.screens.auth.splash.SplashScreen
 
@@ -21,6 +22,8 @@ import com.hashconcepts.buycart.presentation.screens.auth.splash.SplashScreen
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
+    val systemUiController = rememberSystemUiController()
+    val context = LocalContext.current
 
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
         composable(Screens.SplashScreen.route) {
@@ -30,9 +33,15 @@ fun Navigation() {
             }
         }
         composable(route = Screens.OnBoardingScreen.route) {
-            OnBoardingScreen {
-                navController.popBackStack()
-                navController.navigate(Screens.HomeScreen.route)
+            val context = LocalContext.current
+            OnBoardingScreen(
+                systemUiController,
+                onCloseApp = {
+                    (context as ComponentActivity).finish()
+                }) {
+//                navController.popBackStack()
+//                navController.navigate(Screens.HomeScreen.route)
+                Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show()
             }
         }
     }

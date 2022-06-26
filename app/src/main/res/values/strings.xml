@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">BuyCart</string>
+    <string name="title1">Shop From Multiple Vendors</string>
+    <string name="title2">Shop Without Interruptions</string>
+    <string name="title3">Easy Method of Payments</string>
+    <string name="info1">You can shop from different merchants at the same time.</string>
+    <string name="info2">You don\'t need to worry about unnecessary advertisement disturbing you while you are shopping. BuyCart is just for you.</string>
+    <string name="info3">We have various methods of payments available to you; Credit/Debit Cards, E-Wallet, Crypto</string>
 </resources>
