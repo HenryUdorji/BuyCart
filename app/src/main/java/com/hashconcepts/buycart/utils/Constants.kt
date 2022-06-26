@@ -6,6 +6,5 @@ package com.hashconcepts.buycart.utils
  * @author  ifechukwu.udorji
  */
 object Constants {
-    const val BASE_URL = ""
 
 }
