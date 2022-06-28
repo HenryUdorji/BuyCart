@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hashconcepts.buycart.presentation.screens.HomeScreen
+import com.hashconcepts.buycart.presentation.screens.home.HomeScreen
 import com.hashconcepts.buycart.presentation.screens.auth.onboarding.OnBoardingScreen
 import com.hashconcepts.buycart.presentation.screens.auth.splash.SplashScreen
 

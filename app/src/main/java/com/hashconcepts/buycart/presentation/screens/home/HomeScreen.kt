@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.presentation.screens
+package com.hashconcepts.buycart.presentation.screens.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect

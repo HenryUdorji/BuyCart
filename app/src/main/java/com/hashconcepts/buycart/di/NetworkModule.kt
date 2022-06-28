@@ -2,7 +2,7 @@ package com.hashconcepts.buycart.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.hashconcepts.buycart.data.repository.BuyCartApi
+import com.hashconcepts.buycart.data.remote.BuyCartApi
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart
+package com.hashconcepts.buycart.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
