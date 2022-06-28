@@ -69,9 +69,6 @@ dependencies {
     //Shimmer
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
 
-    //Navigation Animation
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
-
     //Pager
     implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
 

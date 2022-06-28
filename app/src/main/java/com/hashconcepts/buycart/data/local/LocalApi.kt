@@ -7,17 +7,5 @@ package com.hashconcepts.buycart.data.local
  */
 interface LocalApi {
 
-    //Get user cart
 
-    //Add new cart
-
-    //update a cart
-
-    //Delete a cart
-
-    //Add user
-
-    //Get user
-
-    //Update user
 }
