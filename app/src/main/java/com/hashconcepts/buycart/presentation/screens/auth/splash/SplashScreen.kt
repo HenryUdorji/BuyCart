@@ -1,7 +1,5 @@
 package com.hashconcepts.buycart.presentation.screens.auth.splash
 
-import android.window.SplashScreen
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
 import com.hashconcepts.buycart.ui.theme.primary
 import kotlinx.coroutines.delay
 
@@ -23,12 +22,18 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    onSplashFinished: () -> Unit
+    onNavigateToOnBoarding: () -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
+    val viewModel = hiltViewModel<AuthViewModel>()
 
     LaunchedEffect(key1 = true) {
         delay(2000)
-        onSplashFinished()
+        if (viewModel.isFirstAppLaunch()) {
+            onNavigateToOnBoarding()
+        } else {
+            onNavigateToHome()
+        }
     }
 
     Box(modifier = Modifier

@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -29,6 +30,7 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.data.local.OnBoardingItem
 import com.hashconcepts.buycart.presentation.components.Indicators
+import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
 import com.hashconcepts.buycart.ui.theme.disable
 import com.hashconcepts.buycart.ui.theme.primary
 import kotlinx.coroutines.launch
@@ -49,6 +51,7 @@ fun OnBoardingScreen(
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val onBoardingItems = OnBoardingItem.provideOnBoardingData()
+    val viewModel = hiltViewModel<AuthViewModel>()
 
     SideEffect {
         systemUiController.setStatusBarColor(Color.White)
@@ -62,6 +65,7 @@ fun OnBoardingScreen(
     ) {
         TopSection(
             onSkipClicked = {
+                viewModel.saveFirstAppLaunch(false)
                 onBoardingFinished()
             },
             onBackClicked = {
@@ -114,6 +118,7 @@ fun OnBoardingScreen(
                     pagerState.scrollToPage(pagerState.currentPage + 1)
                 }
             } else {
+                viewModel.saveFirstAppLaunch(false)
                 onBoardingFinished()
             }
         }

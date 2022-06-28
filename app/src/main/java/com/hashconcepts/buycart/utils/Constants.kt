@@ -7,4 +7,5 @@ package com.hashconcepts.buycart.utils
  */
 object Constants {
 
+    const val IS_FIRST_APP_LAUNCH = "IS_FIRST_APP_LAUNCH"
 }
