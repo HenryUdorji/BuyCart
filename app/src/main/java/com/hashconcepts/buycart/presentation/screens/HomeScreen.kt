@@ -1,7 +1,9 @@
 package com.hashconcepts.buycart.presentation.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.hashconcepts.buycart.ui.theme.background
 
 /**
  * @created 28/06/2022 - 2:44 PM
@@ -11,5 +13,8 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 
 @Composable
 fun HomeScreen(systemUiController: SystemUiController) {
-    
+
+    SideEffect {
+        systemUiController.setStatusBarColor(background)
+    }
 }
