@@ -9,6 +9,7 @@ package com.hashconcepts.buycart.presentation.navigation
 sealed class Screens(val route: String) {
     object SplashScreen: Screens("Splash")
     object OnBoardingScreen: Screens("OnBoarding")
+    object WelcomeScreen: Screens("Welcome")
     object LoginScreen: Screens("Login")
     object RegisterScreen: Screens("Register")
     object HomeScreen: Screens("Home")

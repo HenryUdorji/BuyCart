@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hashconcepts.buycart.presentation.screens.auth.login.LoginScreen
+import com.hashconcepts.buycart.presentation.screens.auth.login.WelcomeScreen
 import com.hashconcepts.buycart.presentation.screens.home.HomeScreen
 import com.hashconcepts.buycart.presentation.screens.auth.onboarding.OnBoardingScreen
 import com.hashconcepts.buycart.presentation.screens.auth.splash.SplashScreen
@@ -28,12 +30,14 @@ fun Navigation() {
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
         composable(Screens.SplashScreen.route) {
             SplashScreen(
+                systemUiController,
                 onNavigateToOnBoarding = {
                     navController.popBackStack()
                     navController.navigate(Screens.OnBoardingScreen.route)
-                }, onNavigateToHome = {
+                },
+                onNavigateToHome = {
                     navController.popBackStack()
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.WelcomeScreen.route)
                 }
             )
         }
@@ -42,15 +46,34 @@ fun Navigation() {
                 systemUiController,
                 onCloseApp = {
                     (context as ComponentActivity).finish()
-                }) {
-                navController.popBackStack()
-                navController.navigate(Screens.HomeScreen.route)
-            }
+                },
+                onBoardingFinished = {
+                    navController.popBackStack()
+                    navController.navigate(Screens.WelcomeScreen.route)
+                })
         }
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(
                 systemUiController
             )
+        }
+        composable(route = Screens.WelcomeScreen.route) {
+            WelcomeScreen(
+                systemUiController,
+                onLoginClicked = {
+                    navController.navigate(Screens.LoginScreen.route)
+                },
+                onRegisterClicked = {
+                    navController.navigate(Screens.RegisterScreen.route)
+                }
+            )
+        }
+        composable(route = Screens.LoginScreen.route) {
+            LoginScreen(
+                systemUiController
+            ) {
+
+            }
         }
     }
 }

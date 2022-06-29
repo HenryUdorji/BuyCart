@@ -31,6 +31,7 @@ import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.data.local.OnBoardingItem
 import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
+import com.hashconcepts.buycart.ui.theme.background
 import com.hashconcepts.buycart.ui.theme.disable
 import com.hashconcepts.buycart.ui.theme.primary
 import kotlinx.coroutines.launch
@@ -48,19 +49,20 @@ fun OnBoardingScreen(
     onCloseApp: () -> Unit,
     onBoardingFinished: () -> Unit
 ) {
+    SideEffect {
+        systemUiController.setStatusBarColor(background)
+        systemUiController.setNavigationBarColor(background)
+    }
+
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val onBoardingItems = OnBoardingItem.provideOnBoardingData()
     val viewModel = hiltViewModel<AuthViewModel>()
 
-    SideEffect {
-        systemUiController.setStatusBarColor(Color.White)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(background)
             .padding(10.dp)
     ) {
         TopSection(

@@ -7,9 +7,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
 import com.hashconcepts.buycart.ui.theme.primary
 import kotlinx.coroutines.delay
@@ -22,10 +26,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
+    systemUiController: SystemUiController,
     onNavigateToOnBoarding: () -> Unit,
     onNavigateToHome: () -> Unit
 ) {
     val viewModel = hiltViewModel<AuthViewModel>()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(primary)
+        systemUiController.setNavigationBarColor(primary)
+    }
 
     LaunchedEffect(key1 = true) {
         delay(2000)

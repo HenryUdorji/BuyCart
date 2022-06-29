@@ -2,6 +2,7 @@ package com.hashconcepts.buycart.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
@@ -9,6 +10,8 @@ import javax.inject.Inject
  * @project BuyCart
  * @author  ifechukwu.udorji
  */
+
+@HiltViewModel
 class HomeViewModel @Inject constructor(
     private val sharedPrefUtil: SharedPrefUtil
 ): ViewModel() {
