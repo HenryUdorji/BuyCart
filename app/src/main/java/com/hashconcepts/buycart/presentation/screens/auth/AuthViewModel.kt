@@ -3,6 +3,7 @@ package com.hashconcepts.buycart.presentation.screens.auth
 import android.content.SharedPreferences
 import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
+import com.hashconcepts.buycart.data.local.SharedPrefUtil
 import com.hashconcepts.buycart.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,15 +15,13 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPrefUtil: SharedPrefUtil
 ): ViewModel() {
 
-    fun isFirstAppLaunch(): Boolean {
-        return sharedPreferences.getBoolean(Constants.IS_FIRST_APP_LAUNCH, true)
-    }
+    val isFirstAppLaunch = sharedPrefUtil.isFirstAppLaunch()
 
-    fun saveFirstAppLaunch(value: Boolean) {
-        sharedPreferences.edit().putBoolean(Constants.IS_FIRST_APP_LAUNCH, value).apply()
-    }
+    fun saveFirstAppLaunch(value: Boolean) = sharedPrefUtil.saveFirstAppLaunch(value)
+
+    fun saveUserAccessToken(token: String) = sharedPrefUtil.saveUserAccessToken(token)
 
 }

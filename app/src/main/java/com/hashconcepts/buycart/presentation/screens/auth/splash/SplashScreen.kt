@@ -29,7 +29,7 @@ fun SplashScreen(
 
     LaunchedEffect(key1 = true) {
         delay(2000)
-        if (viewModel.isFirstAppLaunch()) {
+        if (viewModel.isFirstAppLaunch) {
             onNavigateToOnBoarding()
         } else {
             onNavigateToHome()
