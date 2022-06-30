@@ -37,7 +37,13 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         color = secondary
-    )
+    ),
+    button = TextStyle(
+        fontFamily = poppins,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        color = secondary
+    ),
     /* Other default text styles to override
     button = TextStyle(
         fontFamily = FontFamily.Default,

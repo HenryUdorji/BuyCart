@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.presentation.screens.auth.login
+package com.hashconcepts.buycart.presentation.screens.auth.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.hashconcepts.buycart.presentation.navigation.Screens
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
 import com.hashconcepts.buycart.ui.theme.background
 
@@ -22,9 +23,9 @@ import com.hashconcepts.buycart.ui.theme.background
  */
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     systemUiController: SystemUiController,
-    onRegisterClicked: () -> Unit
+    onLoginClicked: () -> Unit
 ) {
     SideEffect {
         systemUiController.setStatusBarColor(background)
@@ -35,7 +36,7 @@ fun LoginScreen(
 
     Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "LOGIN",
+            text = "REGISTER",
             style = MaterialTheme.typography.h1,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()

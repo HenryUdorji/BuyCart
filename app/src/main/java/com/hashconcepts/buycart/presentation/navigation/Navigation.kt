@@ -12,6 +12,7 @@ import com.hashconcepts.buycart.presentation.screens.auth.login.LoginScreen
 import com.hashconcepts.buycart.presentation.screens.auth.login.WelcomeScreen
 import com.hashconcepts.buycart.presentation.screens.home.HomeScreen
 import com.hashconcepts.buycart.presentation.screens.auth.onboarding.OnBoardingScreen
+import com.hashconcepts.buycart.presentation.screens.auth.register.RegisterScreen
 import com.hashconcepts.buycart.presentation.screens.auth.splash.SplashScreen
 
 /**
@@ -70,6 +71,13 @@ fun Navigation() {
         }
         composable(route = Screens.LoginScreen.route) {
             LoginScreen(
+                systemUiController
+            ) {
+
+            }
+        }
+        composable(route = Screens.RegisterScreen.route) {
+            RegisterScreen(
                 systemUiController
             ) {
 
