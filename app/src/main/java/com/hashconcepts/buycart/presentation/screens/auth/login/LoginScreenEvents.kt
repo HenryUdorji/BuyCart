@@ -6,8 +6,5 @@ package com.hashconcepts.buycart.presentation.screens.auth.login
  * @author  ifechukwu.udorji
  */
 sealed class LoginScreenEvents {
-    data class UsernameEntered(val username: String): LoginScreenEvents()
-    data class PasswordEntered(val password: String): LoginScreenEvents()
-    object LoginClicked: LoginScreenEvents()
-    object RegisterClicked: LoginScreenEvents()
+    data class LoginClicked(val username: String, val password: String): LoginScreenEvents()
 }

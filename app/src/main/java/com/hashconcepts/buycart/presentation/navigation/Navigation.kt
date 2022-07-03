@@ -71,10 +71,15 @@ fun Navigation() {
         }
         composable(route = Screens.LoginScreen.route) {
             LoginScreen(
-                systemUiController
-            ) {
-
-            }
+                systemUiController,
+                onRegisterClicked = {
+                    navController.navigate(Screens.RegisterScreen.route)
+                },
+                onLoginSuccessful = {
+                    navController.popBackStack()
+                    navController.navigate(Screens.HomeScreen.route)
+                }
+            )
         }
         composable(route = Screens.RegisterScreen.route) {
             RegisterScreen(

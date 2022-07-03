@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.hashconcepts.buycart.ui.theme.disable
-import com.hashconcepts.buycart.ui.theme.primary
+import com.hashconcepts.buycart.ui.theme.disableColor
+import com.hashconcepts.buycart.ui.theme.primaryColor
 
 /**
  * @created 26/06/2022 - 2:59 PM
@@ -49,6 +49,6 @@ fun Indicator(
             .height(10.dp)
             .width(width.value)
             .clip(CircleShape)
-            .background(if (isSelected) primary else disable)
+            .background(if (isSelected) primaryColor else disableColor)
     )
 }

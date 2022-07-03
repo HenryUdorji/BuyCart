@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
 import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
 import com.hashconcepts.buycart.domain.usecases.LoginUserUseCase
@@ -13,7 +14,9 @@ import com.hashconcepts.buycart.presentation.screens.auth.login.LoginScreenState
 import com.hashconcepts.buycart.utils.Constants
 import com.hashconcepts.buycart.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -34,33 +37,23 @@ class AuthViewModel @Inject constructor(
 
     fun saveFirstAppLaunch(value: Boolean) = sharedPrefUtil.saveFirstAppLaunch(value)
 
-    fun saveUserAccessToken(token: String) = sharedPrefUtil.saveUserAccessToken(token)
+    private fun saveUserAccessToken(token: String) = sharedPrefUtil.saveUserAccessToken(token)
 
     fun onLoginAction(events: LoginScreenEvents) {
         when(events) {
-            is LoginScreenEvents.UsernameEntered -> {
-                loginScreenState.value = LoginScreenState(loginFormState = LoginFormState(username = events.username))
-            }
-            is LoginScreenEvents.PasswordEntered -> {
-                loginScreenState.value = LoginScreenState(loginFormState = LoginFormState(password = events.password))
-            }
             is LoginScreenEvents.LoginClicked -> {
-                val username = loginScreenState.value.loginFormState?.username
-                val password = loginScreenState.value.loginFormState?.password
+                val username = events.username
+                val password = events.password
 
-                if (username != null && password != null) {
-                    val result = LoginUserUseCase.validateLoginRequest(username, password)
+                val result = LoginUserUseCase.validateLoginRequest(username, password)
 
-                    if (result.error != null) {
-                        loginScreenState.value = LoginScreenState(loginFormState = LoginFormState(formError = result.error))
-                    } else {
-                        loginUser(username, password)
-                    }
+                if (result.successful) {
+                    loginUser(username, password)
+                } else {
+                    loginScreenState.value = LoginScreenState(loginFormState = LoginFormState(formError = result.error))
                 }
             }
-            is LoginScreenEvents.RegisterClicked -> {
-                loginScreenState.value = LoginScreenState(register = true)
-            }
+
         }
     }
 
@@ -74,10 +67,11 @@ class AuthViewModel @Inject constructor(
                     loginScreenState.value = LoginScreenState(error = result.message)
                 }
                 is Resource.Success -> {
+                    saveUserAccessToken(result.data?.token!!)
                     loginScreenState.value = LoginScreenState(successful = true)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
 }

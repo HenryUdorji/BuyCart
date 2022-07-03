@@ -15,8 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.hashconcepts.buycart.R
-import com.hashconcepts.buycart.ui.theme.background
-import com.hashconcepts.buycart.ui.theme.welcomeStatusBar
+import com.hashconcepts.buycart.ui.theme.welcomeStatusBarColor
 
 /**
  * @created 29/06/2022 - 9:17 PM
@@ -31,8 +30,8 @@ fun WelcomeScreen(
     onRegisterClicked: () -> Unit
 ) {
     SideEffect {
-        systemUiController.setStatusBarColor(welcomeStatusBar)
-        systemUiController.setNavigationBarColor(welcomeStatusBar)
+        systemUiController.setStatusBarColor(welcomeStatusBarColor)
+        systemUiController.setNavigationBarColor(welcomeStatusBarColor)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

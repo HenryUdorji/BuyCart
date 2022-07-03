@@ -1,6 +1,5 @@
 package com.hashconcepts.buycart.ui.theme
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -24,25 +23,25 @@ val Typography = Typography(
         fontFamily = poppins,
         fontWeight = FontWeight.SemiBold,
         fontSize = 26.sp,
-        color = secondary
+        color = secondaryColor
     ),
     h2 = TextStyle(
         fontFamily = poppins,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp,
-        color = secondary
+        color = secondaryColor
     ),
     body1 = TextStyle(
         fontFamily = poppins,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        color = secondary
+        color = secondaryColor
     ),
     button = TextStyle(
         fontFamily = poppins,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        color = secondary
+        color = secondaryColor
     ),
     /* Other default text styles to override
     button = TextStyle(

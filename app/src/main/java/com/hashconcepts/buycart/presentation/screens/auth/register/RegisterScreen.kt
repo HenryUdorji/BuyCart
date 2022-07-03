@@ -14,9 +14,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.SystemUiController
-import com.hashconcepts.buycart.presentation.navigation.Screens
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
-import com.hashconcepts.buycart.ui.theme.background
+import com.hashconcepts.buycart.ui.theme.backgroundColor
 
 /**
  * @created 29/06/2022 - 8:57 PM
@@ -30,8 +29,8 @@ fun RegisterScreen(
     onLoginClicked: () -> Unit
 ) {
     SideEffect {
-        systemUiController.setStatusBarColor(background)
-        systemUiController.setNavigationBarColor(background)
+        systemUiController.setStatusBarColor(backgroundColor)
+        systemUiController.setNavigationBarColor(backgroundColor)
     }
 
     val viewModel = hiltViewModel<AuthViewModel>()
@@ -40,7 +39,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(backgroundColor)
     ) {
         Spacer(modifier = Modifier.height(10.dp))
 

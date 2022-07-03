@@ -35,6 +35,13 @@ class LoginUserUseCase @Inject constructor(
 
     companion object {
         fun validateLoginRequest(username: String, password: String): LoginValidationResult {
+            if (username.isBlank() && password.isBlank()) {
+                return LoginValidationResult(
+                    successful = false,
+                    error = "Username and Password cannot be blank"
+                )
+            }
+
             if (username.isBlank()) {
                 return LoginValidationResult(
                     successful = false,
@@ -47,12 +54,7 @@ class LoginUserUseCase @Inject constructor(
                     error = "Password cannot be blank"
                 )
             }
-            if (username.isBlank() && password.isBlank()) {
-                return LoginValidationResult(
-                    successful = false,
-                    error = "Username and Password cannot be blank"
-                )
-            }
+
             return LoginValidationResult(
                 successful = true
             )

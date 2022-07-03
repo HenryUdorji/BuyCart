@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hashconcepts.buycart.ui.theme.*
 
@@ -43,9 +42,9 @@ fun CustomTextField(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = background,
-                textColor = secondary,
-                cursorColor = primary,
+                backgroundColor = backgroundColor,
+                textColor = secondaryColor,
+                cursorColor = primaryColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
@@ -54,7 +53,7 @@ fun CustomTextField(
                 Text(
                     text = placeholder,
                     style = MaterialTheme.typography.body1,
-                    color = disable
+                    color = disableColor
                 )
             },
             textStyle = MaterialTheme.typography.body1,

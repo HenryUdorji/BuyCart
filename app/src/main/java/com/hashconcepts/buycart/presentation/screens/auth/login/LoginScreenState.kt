@@ -9,7 +9,6 @@ data class LoginScreenState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val successful: Boolean = false,
-    val register: Boolean = false,
     val loginFormState: LoginFormState? = null
 )
 
