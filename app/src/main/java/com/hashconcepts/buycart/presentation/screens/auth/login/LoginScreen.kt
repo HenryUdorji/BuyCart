@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +19,7 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 import com.hashconcepts.buycart.presentation.components.ConnectivityStatus
 import com.hashconcepts.buycart.presentation.components.CustomTextField
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
+import com.hashconcepts.buycart.presentation.screens.auth.AuthScreenEvents
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.errorColor
@@ -117,8 +117,8 @@ fun LoginScreen(
                             .padding(horizontal = 20.dp),
                         shape = RoundedCornerShape(10.dp),
                         onClick = {
-                            viewModel.onLoginAction(
-                                LoginScreenEvents.LoginClicked(
+                            viewModel.onAuthAction(
+                                AuthScreenEvents.LoginClicked(
                                     username,
                                     password
                                 )

@@ -3,7 +3,7 @@ package com.hashconcepts.buycart.domain.usecases
 import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
 import com.hashconcepts.buycart.data.remote.dto.response.LoginResponse
 import com.hashconcepts.buycart.domain.repository.AuthRepository
-import com.hashconcepts.buycart.presentation.screens.auth.LoginValidationResult
+import com.hashconcepts.buycart.presentation.screens.auth.ValidationResult
 import com.hashconcepts.buycart.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -34,28 +34,28 @@ class LoginUserUseCase @Inject constructor(
     }
 
     companion object {
-        fun validateLoginRequest(username: String, password: String): LoginValidationResult {
+        fun validateLoginRequest(username: String, password: String): ValidationResult {
             if (username.isBlank() && password.isBlank()) {
-                return LoginValidationResult(
+                return ValidationResult(
                     successful = false,
                     error = "Username and Password cannot be blank"
                 )
             }
 
             if (username.isBlank()) {
-                return LoginValidationResult(
+                return ValidationResult(
                     successful = false,
                     error = "Username cannot be blank"
                 )
             }
             if (password.isBlank()) {
-                return LoginValidationResult(
+                return ValidationResult(
                     successful = false,
                     error = "Password cannot be blank"
                 )
             }
 
-            return LoginValidationResult(
+            return ValidationResult(
                 successful = true
             )
         }
