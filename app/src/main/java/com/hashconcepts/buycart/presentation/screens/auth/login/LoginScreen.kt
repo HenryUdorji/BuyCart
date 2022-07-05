@@ -89,8 +89,8 @@ fun LoginScreen(
                 ) {
                     val keyboardController = LocalSoftwareKeyboardController.current
 
-                    var username by remember { mutableStateOf("") }
-                    var password by remember { mutableStateOf("") }
+                    var username by remember { mutableStateOf("mor_2314") }
+                    var password by remember { mutableStateOf("83r5^_") }
 
                     CustomTextField(
                         label = "Username",

@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.hashconcepts.buycart.ui.theme.*
 
@@ -28,12 +30,15 @@ fun CustomTextField(
     label: String,
     text: String,
     placeholder: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit,
     onHideKeyboard: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 30.dp, top = 30.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 30.dp, top = 30.dp)
     ) {
         Text(text = label, style = MaterialTheme.typography.body1)
 
@@ -58,7 +63,10 @@ fun CustomTextField(
             },
             textStyle = MaterialTheme.typography.body1,
             shape = RoundedCornerShape(10.dp),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = keyboardType
+            ),
             keyboardActions = KeyboardActions(
                 onDone = {
                     onHideKeyboard()

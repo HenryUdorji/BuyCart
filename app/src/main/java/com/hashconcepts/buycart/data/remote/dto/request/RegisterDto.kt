@@ -9,5 +9,25 @@ data class RegisterDto(
     val username: String,
     val password: String,
     val email: String,
-    val phone: String
+    val phone: String,
+    val name: Name = Name(),
+    val address: Address = Address()
+)
+
+data class Name(
+    val firstname: String = "John",
+    val lastname: String = "Doe",
+)
+
+data class Address(
+    val city: String = "kilcoole",
+    val street: String = "7835 new road",
+    val number: Int = 3,
+    val zipcode: String = "12926-3874",
+    val geolocation: Geolocation = Geolocation(),
+)
+
+data class Geolocation(
+    val lat: String = "-37.3159",
+    val long: String = "81.1496"
 )
