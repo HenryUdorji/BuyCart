@@ -37,7 +37,7 @@ import com.hashconcepts.buycart.ui.theme.secondaryColor
 fun LoginScreen(
     systemUiController: SystemUiController,
     onRegisterClicked: () -> Unit,
-    onLoginSuccessful: () -> Unit
+    onLoginSuccessful: () -> Unit,
 ) {
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
@@ -45,7 +45,7 @@ fun LoginScreen(
     }
 
     val viewModel = hiltViewModel<AuthViewModel>()
-    val loginScreenState = viewModel.loginScreenState.value
+    val loginScreenState = viewModel.loginScreenState
 
     val scaffoldState = rememberScaffoldState()
 
@@ -151,10 +151,10 @@ fun LoginScreen(
 
                 ConnectivityStatus()
 
-                if (loginScreenState.loginFormState?.formError != null) {
+                if (loginScreenState.formError != null) {
                     LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
                         scaffoldState.snackbarHostState.showSnackbar(
-                            loginScreenState.loginFormState.formError,
+                            loginScreenState.formError,
                             duration = SnackbarDuration.Short
                         )
                     }

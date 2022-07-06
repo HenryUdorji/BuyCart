@@ -89,7 +89,7 @@ fun Navigation() {
                     navController.popBackStack()
                     navController.navigate(Screens.LoginScreen.route)
                 },
-                onRegisterCompleted = {
+                onRegisterSuccessful = {
                     navController.popBackStack()
                     navController.navigate(Screens.LoginScreen.route)
                 }

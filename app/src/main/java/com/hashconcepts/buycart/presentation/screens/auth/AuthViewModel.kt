@@ -1,19 +1,20 @@
 package com.hashconcepts.buycart.presentation.screens.auth
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
 import com.hashconcepts.buycart.domain.usecases.LoginUserUseCase
 import com.hashconcepts.buycart.domain.usecases.RegisterUserUseCase
-import com.hashconcepts.buycart.presentation.screens.auth.login.LoginFormState
 import com.hashconcepts.buycart.presentation.screens.auth.login.LoginScreenState
-import com.hashconcepts.buycart.presentation.screens.auth.register.RegisterFormState
 import com.hashconcepts.buycart.presentation.screens.auth.register.RegisterScreenState
 import com.hashconcepts.buycart.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -28,10 +29,10 @@ class AuthViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase,
 ) : ViewModel() {
 
-    var loginScreenState = mutableStateOf(LoginScreenState())
+    var loginScreenState by mutableStateOf(LoginScreenState())
         private set
 
-    var registerScreenState = mutableStateOf(RegisterScreenState())
+    var registerScreenState by mutableStateOf(RegisterScreenState())
         private set
 
     val isFirstAppLaunch = sharedPrefUtil.isFirstAppLaunch()
@@ -51,7 +52,7 @@ class AuthViewModel @Inject constructor(
                 if (result.successful) {
                     loginUser(username, password)
                 } else {
-                    loginScreenState.value = LoginScreenState(loginFormState = LoginFormState(formError = result.error))
+                    loginScreenState = loginScreenState.copy(formError = result.error)
                 }
             }
             is AuthScreenEvents.RegisterClicked -> {
@@ -64,7 +65,7 @@ class AuthViewModel @Inject constructor(
                 if (result.successful) {
                     registerUser(username, password, email, phoneNo)
                 } else {
-                    registerScreenState.value = RegisterScreenState(registerFormState = RegisterFormState(formError = result.error))
+                    registerScreenState = registerScreenState.copy(formError = result.error)
                 }
             }
         }
@@ -72,16 +73,16 @@ class AuthViewModel @Inject constructor(
 
     private fun loginUser(username: String, password: String) {
         loginUserUseCase(username, password).onEach { result ->
-            when(result) {
+            loginScreenState = when(result) {
                 is Resource.Loading -> {
-                    loginScreenState.value = LoginScreenState(isLoading = true)
+                    loginScreenState.copy(isLoading = true)
                 }
                 is Resource.Error -> {
-                    loginScreenState.value = LoginScreenState(error = result.message)
+                    loginScreenState.copy(error = result.message)
                 }
                 is Resource.Success -> {
                     saveUserAccessToken(result.data?.token!!)
-                    loginScreenState.value = LoginScreenState(successful = true)
+                    loginScreenState.copy(successful = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -94,15 +95,15 @@ class AuthViewModel @Inject constructor(
         phone: String
     ) {
         registerUserUseCase(username, password, email, phone).onEach { result ->
-            when(result) {
+            registerScreenState = when(result) {
                 is Resource.Loading -> {
-                    registerScreenState.value = RegisterScreenState(isLoading = true)
+                    registerScreenState.copy(isLoading = true)
                 }
                 is Resource.Error -> {
-                    registerScreenState.value = RegisterScreenState(error = result.message)
+                    registerScreenState.copy(error = result.message)
                 }
                 is Resource.Success -> {
-                    registerScreenState.value = RegisterScreenState(successful = true)
+                    registerScreenState.copy(successful = true)
                 }
             }
         }.launchIn(viewModelScope)

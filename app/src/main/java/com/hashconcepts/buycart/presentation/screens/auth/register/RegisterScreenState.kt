@@ -9,13 +9,5 @@ data class RegisterScreenState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val successful: Boolean = false,
-    val registerFormState: RegisterFormState? = null
-)
-
-data class RegisterFormState(
-    val username: String = "",
-    val password: String = "",
-    val email: String = "",
-    val phoneNo: String = "",
     val formError: String? = null,
 )

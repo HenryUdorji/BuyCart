@@ -38,7 +38,7 @@ import com.hashconcepts.buycart.ui.theme.secondaryColor
 fun RegisterScreen(
     systemUiController: SystemUiController,
     onLoginClicked: () -> Unit,
-    onRegisterCompleted: () -> Unit
+    onRegisterSuccessful: () -> Unit,
 ) {
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
@@ -46,7 +46,7 @@ fun RegisterScreen(
     }
 
     val viewModel = hiltViewModel<AuthViewModel>()
-    val registerScreenState = viewModel.registerScreenState.value
+    val registerScreenState = viewModel.registerScreenState
 
     val scaffoldState = rememberScaffoldState()
 
@@ -173,10 +173,10 @@ fun RegisterScreen(
 
                 ConnectivityStatus()
 
-                if (registerScreenState.registerFormState?.formError != null) {
+                if (registerScreenState.formError != null) {
                     LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
                         scaffoldState.snackbarHostState.showSnackbar(
-                            registerScreenState.registerFormState.formError,
+                            registerScreenState.formError,
                             duration = SnackbarDuration.Short
                         )
                     }
@@ -195,7 +195,7 @@ fun RegisterScreen(
                 if (registerScreenState.successful) {
                     CustomAlertDialog(onDismissRequest = {
                         openDialog.value = false
-                        onRegisterCompleted()
+                        onRegisterSuccessful()
                     })
                 }
             }
