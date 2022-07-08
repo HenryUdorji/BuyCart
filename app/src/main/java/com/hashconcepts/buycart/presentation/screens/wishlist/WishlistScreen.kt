@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.presentation.screens.home
+package com.hashconcepts.buycart.presentation.screens.wishlist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
  */
 
 @Composable
-fun HomeScreen() {
+fun WishListScreen() {
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(text = "HOME", style = MaterialTheme.typography.h1)
+        Text(text = "WISHLIST", style = MaterialTheme.typography.h1)
     }
 }

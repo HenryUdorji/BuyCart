@@ -6,5 +6,7 @@ package com.hashconcepts.buycart.presentation.screens.home
  * @author  ifechukwu.udorji
  */
 data class HomeScreenState(
-    val userIsLoggedIn: Boolean = false
+    val userIsLoggedIn: Boolean = false,
+    val isLoading: Boolean = false,
+
 )

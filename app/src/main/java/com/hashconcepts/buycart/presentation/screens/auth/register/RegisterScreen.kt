@@ -25,6 +25,7 @@ import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.errorColor
 import com.hashconcepts.buycart.ui.theme.secondaryColor
+import timber.log.Timber
 
 /**
  * @created 29/06/2022 - 8:57 PM
@@ -39,13 +40,13 @@ fun RegisterScreen(
     systemUiController: SystemUiController,
     onLoginClicked: () -> Unit,
     onRegisterSuccessful: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
         systemUiController.setNavigationBarColor(backgroundColor)
     }
 
-    val viewModel = hiltViewModel<AuthViewModel>()
     val registerScreenState = viewModel.registerScreenState
 
     val scaffoldState = rememberScaffoldState()
@@ -174,7 +175,7 @@ fun RegisterScreen(
                 ConnectivityStatus()
 
                 if (registerScreenState.formError != null) {
-                    LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
+                    LaunchedEffect(key1 = registerScreenState.formError) {
                         scaffoldState.snackbarHostState.showSnackbar(
                             registerScreenState.formError,
                             duration = SnackbarDuration.Short
@@ -183,7 +184,7 @@ fun RegisterScreen(
                 }
 
                 if (registerScreenState.error != null) {
-                    LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
+                    LaunchedEffect(key1 = registerScreenState.error) {
                         scaffoldState.snackbarHostState.showSnackbar(
                             registerScreenState.error,
                             duration = SnackbarDuration.Short
@@ -191,12 +192,14 @@ fun RegisterScreen(
                     }
                 }
 
-                val openDialog = remember { mutableStateOf(true) }
                 if (registerScreenState.successful) {
-                    CustomAlertDialog(onDismissRequest = {
-                        openDialog.value = false
-                        onRegisterSuccessful()
-                    })
+                    val openDialog = remember { mutableStateOf(true) }
+                    if (openDialog.value) {
+                        CustomAlertDialog(onDismissRequest = {
+                            openDialog.value = false
+                            onRegisterSuccessful()
+                        })
+                    }
                 }
             }
         }

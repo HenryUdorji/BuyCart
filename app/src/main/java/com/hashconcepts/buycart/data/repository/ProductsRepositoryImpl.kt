@@ -14,18 +14,18 @@ class ProductsRepositoryImpl @Inject constructor(
     private val buyCartApi: BuyCartApi
 ): ProductsRepository{
     override suspend fun allProducts(): List<ProductsDto> {
-        TODO("Not yet implemented")
+        return buyCartApi.allProducts()
     }
 
     override suspend fun singleProduct(productId: Int): ProductsDto {
-        TODO("Not yet implemented")
+        return buyCartApi.singleProduct(productId)
     }
 
     override suspend fun allCategories(): List<String> {
-        TODO("Not yet implemented")
+        return buyCartApi.allCategories()
     }
 
     override suspend fun productsInCategory(category: String): List<ProductsDto> {
-        TODO("Not yet implemented")
+        return buyCartApi.productsInCategory(category)
     }
 }

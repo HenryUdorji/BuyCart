@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.presentation.screens.auth.login
+package com.hashconcepts.buycart.presentation.screens.auth.welcome
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

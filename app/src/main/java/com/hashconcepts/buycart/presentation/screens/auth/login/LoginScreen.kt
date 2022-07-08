@@ -38,13 +38,13 @@ fun LoginScreen(
     systemUiController: SystemUiController,
     onRegisterClicked: () -> Unit,
     onLoginSuccessful: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
         systemUiController.setNavigationBarColor(backgroundColor)
     }
 
-    val viewModel = hiltViewModel<AuthViewModel>()
     val loginScreenState = viewModel.loginScreenState
 
     val scaffoldState = rememberScaffoldState()
@@ -152,7 +152,7 @@ fun LoginScreen(
                 ConnectivityStatus()
 
                 if (loginScreenState.formError != null) {
-                    LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
+                    LaunchedEffect(key1 = loginScreenState.formError) {
                         scaffoldState.snackbarHostState.showSnackbar(
                             loginScreenState.formError,
                             duration = SnackbarDuration.Short
@@ -161,7 +161,7 @@ fun LoginScreen(
                 }
 
                 if (loginScreenState.error != null) {
-                    LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
+                    LaunchedEffect(key1 = loginScreenState.error) {
                         scaffoldState.snackbarHostState.showSnackbar(
                             loginScreenState.error,
                             duration = SnackbarDuration.Short
