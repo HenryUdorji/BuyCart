@@ -18,18 +18,6 @@ class ProductUseCase @Inject constructor(
     private val productsRepository: ProductsRepository
 ) {
 
-    fun allProducts(): Flow<Resource<List<ProductsDto>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = productsRepository.allProducts()
-            emit(Resource.Success(response))
-        } catch (e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
-        } catch (e: IOException) {
-            emit(Resource.Error("Couldn't reach server. Check your internet connection."))
-        }
-    }
-
     fun categories(): Flow<Resource<List<String>>> = flow {
         try {
             emit(Resource.Loading())
@@ -42,10 +30,14 @@ class ProductUseCase @Inject constructor(
         }
     }
 
-    fun productInCategories(category: String): Flow<Resource<List<ProductsDto>>> = flow {
+    fun products(category: String?): Flow<Resource<List<ProductsDto>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = productsRepository.productsInCategory(category)
+            val response = if (category == null) {
+                productsRepository.allProducts()
+            } else {
+                productsRepository.productsInCategory(category)
+            }
             emit(Resource.Success(response))
         } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))

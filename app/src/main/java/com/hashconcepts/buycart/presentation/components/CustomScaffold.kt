@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.hashconcepts.buycart.ui.theme.backgroundColor
 
 /**
  * @created 09/07/2022 - 2:02 PM
@@ -20,22 +21,10 @@ fun CustomScaffold(
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
+        backgroundColor = backgroundColor,
         bottomBar = {
             if (showBottomBar) {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
-
-                CustomBottomNavBar(currentRoute = currentRoute) { navItem ->
-                    navController.navigate(navItem.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
-                            }
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
+                CustomBottomNavBar(navController = navController)
             }
         }
     ) { paddingValues ->

@@ -8,9 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
 import com.hashconcepts.buycart.utils.Resource
+import com.hashconcepts.buycart.utils.UIEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,20 +32,28 @@ class HomeViewModel @Inject constructor(
     var homeScreenState by mutableStateOf(HomeScreenState())
         private set
 
+    private val eventChannel = Channel<UIEvents>()
+    val eventChannelFlow = eventChannel.receiveAsFlow()
+
     init {
+        fetchProducts()
     }
 
-    fun allProducts() {
-        productUseCase.allProducts().onEach { result ->
+    val offers = listOf(
+        "https://github.com/HenryUdorji/BuyCart/raw/master/Fire_flash_sale_template_ss.jpg"
+    )
+
+    fun fetchProducts(category: String? = null) {
+        productUseCase.products(category).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
-
+                    homeScreenState = homeScreenState.copy(isLoading = true)
                 }
                 is Resource.Error -> {
-
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
-                    Timber.d("SUCCESS ::::::::::: ${result.data}")
+                    homeScreenState = homeScreenState.copy(products = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)

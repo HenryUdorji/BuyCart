@@ -85,9 +85,11 @@ class AuthViewModel @Inject constructor(
                     loadingState = true
                 }
                 is Resource.Error -> {
+                    loadingState = false
                     authChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
+                    loadingState = false
                     saveUserAccessToken(result.data?.token!!)
                     authChannel.send(UIEvents.SuccessEvent)
                 }
@@ -107,9 +109,11 @@ class AuthViewModel @Inject constructor(
                     loadingState = true
                 }
                 is Resource.Error -> {
+                    loadingState = false
                     authChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
+                    loadingState = false
                     authChannel.send(UIEvents.SuccessEvent)
                 }
             }
