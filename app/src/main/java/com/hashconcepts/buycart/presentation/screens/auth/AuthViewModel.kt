@@ -11,10 +11,13 @@ import com.hashconcepts.buycart.domain.usecases.RegisterUserUseCase
 import com.hashconcepts.buycart.presentation.screens.auth.login.LoginScreenState
 import com.hashconcepts.buycart.presentation.screens.auth.register.RegisterScreenState
 import com.hashconcepts.buycart.utils.Resource
+import com.hashconcepts.buycart.utils.UIEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -29,11 +32,11 @@ class AuthViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase,
 ) : ViewModel() {
 
-    var loginScreenState by mutableStateOf(LoginScreenState())
+    var loadingState by mutableStateOf(false)
         private set
 
-    var registerScreenState by mutableStateOf(RegisterScreenState())
-        private set
+    private val authChannel = Channel<UIEvents>()
+    val authChannelFlow = authChannel.receiveAsFlow()
 
     val isFirstAppLaunch = sharedPrefUtil.isFirstAppLaunch()
 
@@ -52,7 +55,9 @@ class AuthViewModel @Inject constructor(
                 if (result.successful) {
                     loginUser(username, password)
                 } else {
-                    loginScreenState = loginScreenState.copy(formError = result.error)
+                    viewModelScope.launch {
+                        authChannel.send(UIEvents.ErrorEvent(result.error!!))
+                    }
                 }
             }
             is AuthScreenEvents.RegisterClicked -> {
@@ -65,7 +70,9 @@ class AuthViewModel @Inject constructor(
                 if (result.successful) {
                     registerUser(username, password, email, phoneNo)
                 } else {
-                    registerScreenState = registerScreenState.copy(formError = result.error)
+                    viewModelScope.launch {
+                        authChannel.send(UIEvents.ErrorEvent(result.error!!))
+                    }
                 }
             }
         }
@@ -73,16 +80,16 @@ class AuthViewModel @Inject constructor(
 
     private fun loginUser(username: String, password: String) {
         loginUserUseCase(username, password).onEach { result ->
-            loginScreenState = when(result) {
+            when(result) {
                 is Resource.Loading -> {
-                    loginScreenState.copy(isLoading = true)
+                    loadingState = true
                 }
                 is Resource.Error -> {
-                    loginScreenState.copy(error = result.message)
+                    authChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
                     saveUserAccessToken(result.data?.token!!)
-                    loginScreenState.copy(successful = true)
+                    authChannel.send(UIEvents.SuccessEvent)
                 }
             }
         }.launchIn(viewModelScope)
@@ -95,15 +102,15 @@ class AuthViewModel @Inject constructor(
         phone: String
     ) {
         registerUserUseCase(username, password, email, phone).onEach { result ->
-            registerScreenState = when(result) {
+            when(result) {
                 is Resource.Loading -> {
-                    registerScreenState.copy(isLoading = true)
+                    loadingState = true
                 }
                 is Resource.Error -> {
-                    registerScreenState.copy(error = result.message)
+                    authChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
-                    registerScreenState.copy(successful = true)
+                    authChannel.send(UIEvents.SuccessEvent)
                 }
             }
         }.launchIn(viewModelScope)

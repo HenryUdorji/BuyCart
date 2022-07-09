@@ -28,8 +28,11 @@ import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.errorColor
 import com.hashconcepts.buycart.ui.theme.secondaryColor
+import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 
 /**
  * @created 29/06/2022 - 8:57 PM
@@ -51,9 +54,25 @@ fun LoginScreen(
         systemUiController.setNavigationBarColor(backgroundColor)
     }
 
-    val loginScreenState = viewModel.loginScreenState
-
     val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.authChannelFlow.collectLatest { uiEvents ->
+            when (uiEvents) {
+                is UIEvents.ErrorEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        uiEvents.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                is UIEvents.SuccessEvent -> {
+                    navigator.clearBackStack(LoginScreenDestination.route)
+                    navigator.navigate(HomeScreenDestination)
+                }
+            }
+        }
+    }
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -66,7 +85,7 @@ fun LoginScreen(
                     .background(backgroundColor)
             ) {
 
-                if (loginScreenState.isLoading) {
+                if (viewModel.loadingState) {
                     LinearProgressIndicator(
                         modifier = Modifier
                             .height(2.dp)
@@ -157,29 +176,6 @@ fun LoginScreen(
                 }
 
                 ConnectivityStatus()
-
-                if (loginScreenState.formError != null) {
-                    LaunchedEffect(key1 = loginScreenState.formError) {
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            loginScreenState.formError,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-
-                if (loginScreenState.error != null) {
-                    LaunchedEffect(key1 = loginScreenState.error) {
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            loginScreenState.error,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-
-                if (loginScreenState.successful) {
-                    navigator.clearBackStack(LoginScreenDestination.route)
-                    navigator.navigate(HomeScreenDestination)
-                }
             }
         })
 }

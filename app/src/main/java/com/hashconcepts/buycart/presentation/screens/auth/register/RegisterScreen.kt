@@ -22,13 +22,16 @@ import com.hashconcepts.buycart.presentation.components.ConnectivityStatus
 import com.hashconcepts.buycart.presentation.components.CustomTextField
 import com.hashconcepts.buycart.presentation.screens.auth.AuthScreenEvents
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
+import com.hashconcepts.buycart.presentation.screens.destinations.HomeScreenDestination
 import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.errorColor
 import com.hashconcepts.buycart.ui.theme.secondaryColor
+import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 /**
@@ -51,9 +54,36 @@ fun RegisterScreen(
         systemUiController.setNavigationBarColor(backgroundColor)
     }
 
-    val registerScreenState = viewModel.registerScreenState
-
     val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.authChannelFlow.collectLatest { uiEvents ->
+            when (uiEvents) {
+                is UIEvents.ErrorEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        uiEvents.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                is UIEvents.SuccessEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        "Registration successful",
+                        duration = SnackbarDuration.Short
+                    )
+                    navigator.popBackStack()
+                    navigator.navigate(LoginScreenDestination)
+
+//                                val openDialog = remember { mutableStateOf(true) }
+//                                if (openDialog.value) {
+//                                    CustomAlertDialog(onDismissRequest = {
+//                                        openDialog.value = false
+//                                        navigator.popBackStack()
+//                                        navigator.navigate(LoginScreenDestination)
+//                                    })
+                }
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -65,7 +95,7 @@ fun RegisterScreen(
                     .fillMaxSize()
                     .background(backgroundColor)
             ) {
-                if (registerScreenState.isLoading) {
+                if (viewModel.loadingState) {
                     LinearProgressIndicator(
                         modifier = Modifier
                             .height(2.dp)
@@ -178,35 +208,6 @@ fun RegisterScreen(
                 }
 
                 ConnectivityStatus()
-
-                if (registerScreenState.formError != null) {
-                    LaunchedEffect(key1 = registerScreenState.formError) {
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            registerScreenState.formError,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-
-                if (registerScreenState.error != null) {
-                    LaunchedEffect(key1 = registerScreenState.error) {
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            registerScreenState.error,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-
-                if (registerScreenState.successful) {
-                    val openDialog = remember { mutableStateOf(true) }
-                    if (openDialog.value) {
-                        CustomAlertDialog(onDismissRequest = {
-                            openDialog.value = false
-                            navigator.popBackStack()
-                            navigator.navigate(LoginScreenDestination)
-                        })
-                    }
-                }
             }
         }
     )

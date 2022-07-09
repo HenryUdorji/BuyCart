@@ -7,7 +7,4 @@ package com.hashconcepts.buycart.presentation.screens.auth.login
  */
 data class LoginScreenState(
     val isLoading: Boolean = false,
-    val error: String? = null,
-    val successful: Boolean = false,
-    val formError: String? = null,
 )

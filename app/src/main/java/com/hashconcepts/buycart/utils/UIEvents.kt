@@ -7,6 +7,6 @@ package com.hashconcepts.buycart.utils
  */
 
 sealed class UIEvents {
-    data class NavigateEvent(val route: String): UIEvents()
+    object SuccessEvent: UIEvents()
     data class ErrorEvent(val message: String): UIEvents()
 }
