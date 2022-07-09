@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hashconcepts.buycart.R
-import com.hashconcepts.buycart.presentation.navigation.Screens
+import com.hashconcepts.buycart.presentation.screens.destinations.*
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.primaryColor
 
@@ -26,13 +26,21 @@ import com.hashconcepts.buycart.ui.theme.primaryColor
  * @author  ifechukwu.udorji
  */
 
-fun bottomNavItems(): List<Screens.BottomNavScreens> {
+sealed class BottomNavItem(val iconRes: Int, val destination: Destination) {
+    object HomeScreen: BottomNavItem(R.drawable.ic_home, HomeScreenDestination)
+    object SearchScreen: BottomNavItem(R.drawable.ic_search, SearchScreenDestination)
+    object CartScreen: BottomNavItem(R.drawable.ic_cart, CartScreenDestination)
+    object WishListScreen: BottomNavItem(R.drawable.ic_wishlist, WishListScreenDestination)
+    object ProfileScreen: BottomNavItem(R.drawable.ic_profile, ProfileScreenDestination)
+}
+
+fun bottomNavItems(): List<BottomNavItem> {
     return listOf(
-        Screens.BottomNavScreens.HomeScreen,
-        Screens.BottomNavScreens.SearchScreen,
-        Screens.BottomNavScreens.WishListScreen,
-        Screens.BottomNavScreens.CartScreen,
-        Screens.BottomNavScreens.ProfileScreen,
+        BottomNavItem.HomeScreen,
+        BottomNavItem.SearchScreen,
+        BottomNavItem.WishListScreen,
+        BottomNavItem.CartScreen,
+        BottomNavItem.ProfileScreen,
     )
 }
 
@@ -41,9 +49,9 @@ fun bottomNavItems(): List<Screens.BottomNavScreens> {
 @Preview
 fun CustomBottomNavBar(
     modifier: Modifier = Modifier,
-    navItems: List<Screens.BottomNavScreens> = bottomNavItems(),
+    navItems: List<BottomNavItem> = bottomNavItems(),
     currentRoute: String?,
-    onBottomNavItemSelected: (Screens.BottomNavScreens) -> Unit
+    onBottomNavItemSelected: (Destination) -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -55,7 +63,7 @@ fun CustomBottomNavBar(
             .height(70.dp)
     ) {
         navItems.forEach { navItem ->
-            val selectedNavItem = navItem.route == currentRoute
+            val selectedNavItem = navItem.destination.route == currentRoute
             val selectedColor = if (selectedNavItem) primaryColor else disableColor
 
             Icon(
@@ -67,7 +75,7 @@ fun CustomBottomNavBar(
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
                     if (!selectedNavItem) {
-                        onBottomNavItemSelected(navItem)
+                        onBottomNavItemSelected(navItem.destination)
                     }
                 }
             )

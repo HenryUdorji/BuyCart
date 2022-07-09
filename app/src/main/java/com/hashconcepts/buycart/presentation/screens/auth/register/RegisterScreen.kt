@@ -17,14 +17,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.presentation.components.ConnectivityStatus
 import com.hashconcepts.buycart.presentation.components.CustomTextField
 import com.hashconcepts.buycart.presentation.screens.auth.AuthScreenEvents
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
+import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.errorColor
 import com.hashconcepts.buycart.ui.theme.secondaryColor
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import timber.log.Timber
 
 /**
@@ -33,15 +37,15 @@ import timber.log.Timber
  * @author  ifechukwu.udorji
  */
 
+@Destination
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun RegisterScreen(
-    systemUiController: SystemUiController,
-    onLoginClicked: () -> Unit,
-    onRegisterSuccessful: () -> Unit,
+    navigator: DestinationsNavigator,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
         systemUiController.setNavigationBarColor(backgroundColor)
@@ -166,7 +170,8 @@ fun RegisterScreen(
                             style = MaterialTheme.typography.body1,
                             color = secondaryColor,
                             modifier = Modifier.clickable {
-                                onLoginClicked()
+                                navigator.popBackStack()
+                                navigator.navigate(LoginScreenDestination)
                             }
                         )
                     }
@@ -197,7 +202,8 @@ fun RegisterScreen(
                     if (openDialog.value) {
                         CustomAlertDialog(onDismissRequest = {
                             openDialog.value = false
-                            onRegisterSuccessful()
+                            navigator.popBackStack()
+                            navigator.navigate(LoginScreenDestination)
                         })
                     }
                 }

@@ -12,8 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
+import com.hashconcepts.buycart.presentation.screens.destinations.HomeScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.OnBoardingScreenDestination
 import com.hashconcepts.buycart.ui.theme.primaryColor
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 
 /**
@@ -22,14 +28,15 @@ import kotlinx.coroutines.delay
  * @author  ifechukwu.udorji
  */
 
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun SplashScreen(
-    systemUiController: SystemUiController,
-    onNavigateToOnBoarding: () -> Unit,
-    onNavigateToHome: () -> Unit
+    navigator: DestinationsNavigator,
 ) {
     val viewModel = hiltViewModel<AuthViewModel>()
 
+    val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(primaryColor)
         systemUiController.setNavigationBarColor(primaryColor)
@@ -38,9 +45,11 @@ fun SplashScreen(
     LaunchedEffect(key1 = true) {
         delay(2000)
         if (viewModel.isFirstAppLaunch) {
-            onNavigateToOnBoarding()
+            navigator.popBackStack()
+            navigator.navigate(OnBoardingScreenDestination)
         } else {
-            onNavigateToHome()
+            navigator.popBackStack()
+            navigator.navigate(HomeScreenDestination)
         }
     }
 

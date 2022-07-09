@@ -23,12 +23,16 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.data.local.OnBoardingItem
 import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
+import com.hashconcepts.buycart.presentation.screens.destinations.WelcomeScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.primaryColor
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 
 /**
@@ -37,13 +41,13 @@ import kotlinx.coroutines.launch
  * @author  ifechukwu.udorji
  */
 
+@Destination
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnBoardingScreen(
-    systemUiController: SystemUiController,
-    onCloseApp: () -> Unit,
-    onBoardingFinished: () -> Unit
+    navigator: DestinationsNavigator,
 ) {
+    val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
         systemUiController.setNavigationBarColor(backgroundColor)
@@ -63,7 +67,8 @@ fun OnBoardingScreen(
         TopSection(
             onSkipClicked = {
                 viewModel.saveFirstAppLaunch(false)
-                onBoardingFinished()
+                navigator.popBackStack()
+                navigator.navigate(WelcomeScreenDestination)
             },
             onBackClicked = {
                 if (pagerState.currentPage - 1 > -1) {
@@ -71,7 +76,7 @@ fun OnBoardingScreen(
                         pagerState.scrollToPage(pagerState.currentPage - 1)
                     }
                 } else {
-                    onCloseApp()
+                    //onCloseApp()
                 }
             }
         )
@@ -116,7 +121,8 @@ fun OnBoardingScreen(
                 }
             } else {
                 viewModel.saveFirstAppLaunch(false)
-                onBoardingFinished()
+                navigator.popBackStack()
+                navigator.navigate(WelcomeScreenDestination)
             }
         }
     }

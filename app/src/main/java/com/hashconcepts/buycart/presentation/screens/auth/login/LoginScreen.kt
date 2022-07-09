@@ -16,14 +16,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.presentation.components.ConnectivityStatus
 import com.hashconcepts.buycart.presentation.components.CustomTextField
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
 import com.hashconcepts.buycart.presentation.screens.auth.AuthScreenEvents
+import com.hashconcepts.buycart.presentation.screens.destinations.HomeScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.RegisterScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.errorColor
 import com.hashconcepts.buycart.ui.theme.secondaryColor
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 /**
  * @created 29/06/2022 - 8:57 PM
@@ -31,15 +37,15 @@ import com.hashconcepts.buycart.ui.theme.secondaryColor
  * @author  ifechukwu.udorji
  */
 
+@Destination
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    systemUiController: SystemUiController,
-    onRegisterClicked: () -> Unit,
-    onLoginSuccessful: () -> Unit,
+    navigator: DestinationsNavigator,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(backgroundColor)
         systemUiController.setNavigationBarColor(backgroundColor)
@@ -143,7 +149,8 @@ fun LoginScreen(
                             style = MaterialTheme.typography.body1,
                             color = secondaryColor,
                             modifier = Modifier.clickable {
-                                onRegisterClicked()
+                                navigator.popBackStack()
+                                navigator.navigate(RegisterScreenDestination)
                             }
                         )
                     }
@@ -170,7 +177,8 @@ fun LoginScreen(
                 }
 
                 if (loginScreenState.successful) {
-                    onLoginSuccessful()
+                    navigator.clearBackStack(LoginScreenDestination.route)
+                    navigator.navigate(HomeScreenDestination)
                 }
             }
         })

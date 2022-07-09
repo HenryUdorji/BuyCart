@@ -14,8 +14,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
+import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.RegisterScreenDestination
 import com.hashconcepts.buycart.ui.theme.welcomeStatusBarColor
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 /**
  * @created 29/06/2022 - 9:17 PM
@@ -23,12 +28,12 @@ import com.hashconcepts.buycart.ui.theme.welcomeStatusBarColor
  * @author  ifechukwu.udorji
  */
 
+@Destination
 @Composable
 fun WelcomeScreen(
-    systemUiController: SystemUiController,
-    onLoginClicked: () -> Unit,
-    onRegisterClicked: () -> Unit
+    navigator: DestinationsNavigator,
 ) {
+    val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(welcomeStatusBarColor)
         systemUiController.setNavigationBarColor(welcomeStatusBarColor)
@@ -54,7 +59,7 @@ fun WelcomeScreen(
                     .height(50.dp)
                     .weight(1f),
                 shape = RoundedCornerShape(10.dp),
-                onClick = { onLoginClicked() }
+                onClick = { navigator.navigate(LoginScreenDestination) }
             ) {
                 Text(text = "Login", style = MaterialTheme.typography.button)
             }
@@ -70,7 +75,7 @@ fun WelcomeScreen(
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = Color.Transparent
                 ),
-                onClick = { onRegisterClicked() }
+                onClick = { navigator.navigate(RegisterScreenDestination) }
             ) {
                 Text(text = "Register", style = MaterialTheme.typography.button)
             }
