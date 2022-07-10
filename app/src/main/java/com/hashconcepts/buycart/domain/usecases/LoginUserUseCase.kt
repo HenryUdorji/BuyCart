@@ -27,7 +27,7 @@ class LoginUserUseCase @Inject constructor(
             val response = authRepository.loginUser(loginDto)
             emit(Resource.Success(response))
         } catch (e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
+            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
         } catch (e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
