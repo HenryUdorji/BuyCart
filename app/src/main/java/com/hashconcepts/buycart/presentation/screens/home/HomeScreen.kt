@@ -7,17 +7,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
+import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.ui.theme.primaryColor
@@ -67,21 +73,45 @@ fun HomeScreen(
 
             SearchFilterSection()
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            OfferSection(homeViewModel.offers)
+            OfferSection(homeViewModel.offerImages)
         }
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OfferSection(offers: List<String>) {
+    val pagerState = rememberPagerState()
 
-    Image(
-        painter = rememberAsyncImagePainter(model = offers[0]),
-        contentDescription = null,
-        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(15.dp))
-    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        HorizontalPager(
+            count = offers.size,
+            state = pagerState,
+            itemSpacing = 10.dp,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val currentOffer = offers[pagerState.currentPage]
+            AsyncImage(
+                model = currentOffer,
+                contentDescription = null,
+                placeholder = painterResource(id = R.drawable.placeholder_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .height(170.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(7.dp))
+
+        Indicators(size = offers.size, index = pagerState.currentPage)
+    }
 }
 
 @Composable

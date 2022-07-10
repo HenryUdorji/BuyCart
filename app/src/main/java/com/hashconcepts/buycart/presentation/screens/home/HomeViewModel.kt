@@ -39,8 +39,10 @@ class HomeViewModel @Inject constructor(
         fetchProducts()
     }
 
-    val offers = listOf(
-        "https://github.com/HenryUdorji/BuyCart/raw/master/Fire_flash_sale_template_ss.jpg"
+    val offerImages = listOf(
+        "https://github.com/HenryUdorji/BuyCart/raw/master/offersImages/offerImage1.jpg",
+        "https://github.com/HenryUdorji/BuyCart/raw/master/offersImages/offerImage2.jpg",
+        "https://github.com/HenryUdorji/BuyCart/raw/master/offersImages/offerImage3.jpg",
     )
 
     fun fetchProducts(category: String? = null) {
