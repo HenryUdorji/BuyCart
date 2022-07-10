@@ -14,4 +14,7 @@ data class HomeScreenState(
     val selectedCategoryIndex: Int = 0,
     val categories: MutableList<String> = mutableListOf(),
     val products: List<ProductsDto> = emptyList(),
+    val addingToCart: Boolean = false,
+    val addedToCart: Boolean = false,
+    val productInCart: Int = -1,
 )

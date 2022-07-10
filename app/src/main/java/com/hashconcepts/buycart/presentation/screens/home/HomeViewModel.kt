@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
+import com.hashconcepts.buycart.domain.usecases.CartUseCase
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
@@ -26,8 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val sharedPrefUtil: SharedPrefUtil,
-    private val productUseCase: ProductUseCase
+    private val productUseCase: ProductUseCase,
+    private val cartUseCase: CartUseCase,
 ): ViewModel() {
 
     var homeScreenState by mutableStateOf(HomeScreenState())
@@ -48,16 +49,18 @@ class HomeViewModel @Inject constructor(
     )
 
     fun onEvents(events: HomeScreenEvents) {
-        homeScreenState = when(events) {
+        when(events) {
             is HomeScreenEvents.FilterClicked -> {
-                homeScreenState.copy(filterSelected = events.isClicked)
+                homeScreenState = homeScreenState.copy(filterSelected = events.isClicked)
             }
             is HomeScreenEvents.CategorySelected -> {
                 fetchProducts(events.category)
-                homeScreenState.copy(selectedCategoryIndex = events.index)
+                homeScreenState = homeScreenState.copy(selectedCategoryIndex = events.index)
             }
-            is HomeScreenEvents.ProductAddedToCart -> TODO()
-            is HomeScreenEvents.ProductAddedToWishList -> TODO()
+            is HomeScreenEvents.AddProductToCart -> {
+                addToCart(events.productId)
+                homeScreenState = homeScreenState.copy(productInCart = events.productId)
+            }
             is HomeScreenEvents.ProductClicked -> TODO()
         }
     }
@@ -94,6 +97,24 @@ class HomeViewModel @Inject constructor(
                     val toMutableList = result.data?.toMutableList()
                     toMutableList?.add(0, "All")
                     homeScreenState = homeScreenState.copy(categories = (toMutableList!!))
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun addToCart(productId: Int) {
+        cartUseCase.addToCart(productId).onEach { result ->
+            when(result) {
+                is Resource.Loading -> {
+                    homeScreenState = homeScreenState.copy(addingToCart = true)
+                }
+                is Resource.Error -> {
+                    homeScreenState = homeScreenState.copy(addingToCart = false)
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    homeScreenState = homeScreenState.copy(addingToCart = false)
+                    homeScreenState = homeScreenState.copy(addedToCart = true)
                 }
             }
         }.launchIn(viewModelScope)

@@ -1,8 +1,10 @@
 package com.hashconcepts.buycart.di
 
 import com.hashconcepts.buycart.data.repository.AuthRepositoryImpl
+import com.hashconcepts.buycart.data.repository.CartRepositoryImpl
 import com.hashconcepts.buycart.data.repository.ProductsRepositoryImpl
 import com.hashconcepts.buycart.domain.repository.AuthRepository
+import com.hashconcepts.buycart.domain.repository.CartRepository
 import com.hashconcepts.buycart.domain.repository.ProductsRepository
 import dagger.Binds
 import dagger.Module
@@ -27,4 +29,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsProductRepository(productsRepositoryImpl: ProductsRepositoryImpl): ProductsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsCartRepository(cartRepositoryImpl: CartRepositoryImpl): CartRepository
 }

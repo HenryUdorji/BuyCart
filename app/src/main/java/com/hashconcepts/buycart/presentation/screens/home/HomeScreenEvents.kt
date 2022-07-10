@@ -9,6 +9,5 @@ sealed class HomeScreenEvents {
     data class FilterClicked(val isClicked: Boolean): HomeScreenEvents()
     data class CategorySelected(val category: String, val index: Int): HomeScreenEvents()
     data class ProductClicked(val productId: Int): HomeScreenEvents()
-    data class ProductAddedToWishList(val productId: Int): HomeScreenEvents()
-    data class ProductAddedToCart(val productId: Int): HomeScreenEvents()
+    data class AddProductToCart(val productId: Int): HomeScreenEvents()
 }

@@ -1,8 +1,10 @@
 package com.hashconcepts.buycart.data.repository
 
 import com.hashconcepts.buycart.data.remote.BuyCartApi
+import com.hashconcepts.buycart.data.remote.dto.AddCartDto
 import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
 import com.hashconcepts.buycart.domain.repository.CartRepository
+import okhttp3.ResponseBody
 import javax.inject.Inject
 
 /**
@@ -14,6 +16,10 @@ class CartRepositoryImpl @Inject constructor(
     private val buyCartApi: BuyCartApi
 ): CartRepository{
     override suspend fun usersCart(userId: Int): List<CartsDto> {
-        TODO("Not yet implemented")
+        return buyCartApi.usersCart(userId)
+    }
+
+    override suspend fun addToCart(addCartDto: AddCartDto): ResponseBody {
+        return buyCartApi.addToCart(addCartDto)
     }
 }

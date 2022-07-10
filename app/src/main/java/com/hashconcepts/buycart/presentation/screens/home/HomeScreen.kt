@@ -1,6 +1,7 @@
 package com.hashconcepts.buycart.presentation.screens.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,8 +36,12 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.ui.theme.*
+import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import java.lang.Exception
 
 /**
  * @created 08/07/2022 - 4:49 PM
@@ -58,6 +64,18 @@ fun HomeScreen(
 
     val scaffoldState = rememberScaffoldState()
 
+    LaunchedEffect(key1 = true) {
+        homeViewModel.eventChannelFlow.collectLatest { uiEvent ->
+            when(uiEvent) {
+                is UIEvents.ErrorEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = uiEvent.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -108,6 +126,9 @@ fun HomeScreen(
 @Composable
 fun ProductSection(homeViewModel: HomeViewModel) {
     val products = homeViewModel.homeScreenState.products
+    val state = homeViewModel.homeScreenState
+    val context = LocalContext.current
+
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalArrangement = Arrangement.spacedBy(15.dp),
@@ -120,6 +141,14 @@ fun ProductSection(homeViewModel: HomeViewModel) {
                         .clip(RoundedCornerShape(20.dp))
                         .background(Color.White)
                         .padding(10.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            Toast
+                                .makeText(context, product.title, Toast.LENGTH_SHORT)
+                                .show()
+                        }
                 ) {
                     AsyncImage(
                         model = product.image,
@@ -154,21 +183,33 @@ fun ProductSection(homeViewModel: HomeViewModel) {
                             style = MaterialTheme.typography.h2,
                             fontSize = 13.sp
                         )
-                        Text(
-                            text = "Add Cart",
-                            style = MaterialTheme.typography.h2,
-                            fontSize = 11.sp,
+                        Box(
+                            contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(primaryColor)
-                                .padding(5.dp)
+                                .padding(vertical = 5.dp, horizontal = 7.dp)
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-
+                                    homeViewModel.onEvents(HomeScreenEvents.AddProductToCart(product.id))
                                 }
-                        )
+                        ) {
+                            if (state.addingToCart && product.id == state.productInCart) {
+                                CircularProgressIndicator(
+                                    strokeWidth = 1.dp,
+                                    modifier = Modifier.size(15.dp),
+                                    color = secondaryColor
+                                )
+                            } else {
+                                Text(
+                                    text = if (state.addedToCart && product.id == state.productInCart) "Added" else "Add Cart",
+                                    style = MaterialTheme.typography.h2,
+                                    fontSize = 11.sp,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -239,12 +280,25 @@ fun OfferSection(offers: List<String>) {
 
         Indicators(size = offers.size, index = pagerState.currentPage)
     }
+
+    LaunchedEffect(key1 = pagerState.currentPage) {
+        try {
+            delay(3000L)
+            val page = if (pagerState.currentPage < pagerState.pageCount - 1) {
+                pagerState.currentPage + 1
+            } else 0
+            pagerState.scrollToPage(page)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
 
 @Composable
 fun SearchFilterSection(homeViewModel: HomeViewModel) {
     var searchText by remember { mutableStateOf("") }
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -268,8 +322,7 @@ fun SearchFilterSection(homeViewModel: HomeViewModel) {
             ),
             modifier = Modifier
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
-                .weight(1f)
-                .height(50.dp),
+                .weight(1f),
             maxLines = 1,
             singleLine = true,
         )

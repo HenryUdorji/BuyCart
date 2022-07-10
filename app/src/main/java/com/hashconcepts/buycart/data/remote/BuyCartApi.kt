@@ -1,5 +1,6 @@
 package com.hashconcepts.buycart.data.remote
 
+import com.hashconcepts.buycart.data.remote.dto.AddCartDto
 import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
 import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
 import com.hashconcepts.buycart.data.remote.dto.request.RegisterDto
@@ -7,6 +8,7 @@ import com.hashconcepts.buycart.data.remote.dto.request.UserDto
 import com.hashconcepts.buycart.data.remote.dto.response.LoginResponse
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -40,9 +42,9 @@ interface BuyCartApi {
     //Get user cart
     @GET("carts/user/{userId}")
     suspend fun usersCart(@Path("userId") userId: Int): List<CartsDto>
-
     //Add new cart
-
+    @POST("carts")
+    suspend fun addToCart(@Body addCartDto: AddCartDto): ResponseBody
     //update a cart
 
     //Delete a cart
