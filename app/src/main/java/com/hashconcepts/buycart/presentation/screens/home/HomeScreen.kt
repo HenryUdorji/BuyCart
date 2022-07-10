@@ -1,9 +1,17 @@
 package com.hashconcepts.buycart.presentation.screens.home
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -14,20 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.presentation.components.Indicators
-import com.hashconcepts.buycart.ui.theme.backgroundColor
-import com.hashconcepts.buycart.ui.theme.disableColor
-import com.hashconcepts.buycart.ui.theme.primaryColor
-import com.hashconcepts.buycart.ui.theme.secondaryColor
+import com.hashconcepts.buycart.ui.theme.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -51,6 +57,8 @@ fun HomeScreen(
     }
 
     val scaffoldState = rememberScaffoldState()
+
+
     Scaffold(
         scaffoldState = scaffoldState,
         backgroundColor = backgroundColor
@@ -60,6 +68,15 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(horizontal = 10.dp)
         ) {
+            if (homeViewModel.homeScreenState.isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth(),
+                    color = errorColor
+                )
+            }
+
             Text(
                 text = "Discover",
                 style = MaterialTheme.typography.h1,
@@ -71,12 +88,122 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            SearchFilterSection()
+            SearchFilterSection(homeViewModel)
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            OfferSection(homeViewModel.offerImages)
+            if (!homeViewModel.homeScreenState.filterSelected) {
+                OfferSection(homeViewModel.offerImages)
+            } else {
+                CategorySection(homeViewModel)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ProductSection(homeViewModel)
         }
+    }
+}
+
+@Composable
+fun ProductSection(homeViewModel: HomeViewModel) {
+    val products = homeViewModel.homeScreenState.products
+    LazyVerticalGrid(
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        columns = GridCells.Fixed(2),
+        content = {
+            items(products) { product ->
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color.White)
+                        .padding(10.dp)
+                ) {
+                    AsyncImage(
+                        model = product.image,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.placeholder_image),
+                        modifier = Modifier
+                            .size(100.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = product.title,
+                        style = MaterialTheme.typography.h2,
+                        fontSize = 12.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "$${product.price}",
+                            style = MaterialTheme.typography.h2,
+                            fontSize = 13.sp
+                        )
+                        Text(
+                            text = "Add Cart",
+                            style = MaterialTheme.typography.h2,
+                            fontSize = 11.sp,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(primaryColor)
+                                .padding(5.dp)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+
+                                }
+                        )
+                    }
+                }
+            }
+        })
+}
+
+@Composable
+fun CategorySection(homeViewModel: HomeViewModel) {
+    val categories = homeViewModel.homeScreenState.categories
+    val categoryIndex = homeViewModel.homeScreenState.selectedCategoryIndex
+    if (categories.isNotEmpty()) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), content = {
+            items(categories) { category ->
+                Text(
+                    text = category,
+                    style = MaterialTheme.typography.h2,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(if (categoryIndex == categories.indexOf(category)) primaryColor else Color.White)
+                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            homeViewModel.onEvents(
+                                HomeScreenEvents.CategorySelected(
+                                    category,
+                                    categories.indexOf(category)
+                                )
+                            )
+                        }
+                )
+            }
+        })
     }
 }
 
@@ -115,7 +242,7 @@ fun OfferSection(offers: List<String>) {
 }
 
 @Composable
-fun SearchFilterSection() {
+fun SearchFilterSection(homeViewModel: HomeViewModel) {
     var searchText by remember { mutableStateOf("") }
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -149,15 +276,14 @@ fun SearchFilterSection() {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        var filterSelected by remember { mutableStateOf(false) }
         IconButton(onClick = {
-            filterSelected = !filterSelected
+            homeViewModel.onEvents(HomeScreenEvents.FilterClicked(!homeViewModel.homeScreenState.filterSelected))
         }) {
             Icon(
                 modifier = Modifier
                     .size(50.dp)
                     .clip(shape = RoundedCornerShape(size = 8.dp))
-                    .background(if (filterSelected) primaryColor else Color.White)
+                    .background(if (homeViewModel.homeScreenState.filterSelected) primaryColor else Color.White)
                     .padding(5.dp),
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = null,

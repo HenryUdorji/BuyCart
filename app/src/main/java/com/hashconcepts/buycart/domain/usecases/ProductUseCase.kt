@@ -30,10 +30,10 @@ class ProductUseCase @Inject constructor(
         }
     }
 
-    fun products(category: String?): Flow<Resource<List<ProductsDto>>> = flow {
+    fun products(category: String): Flow<Resource<List<ProductsDto>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = if (category == null) {
+            val response = if (category == "All") {
                 productsRepository.allProducts()
             } else {
                 productsRepository.productsInCategory(category)

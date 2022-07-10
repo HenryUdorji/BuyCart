@@ -29,16 +29,16 @@ interface BuyCartApi {
     @GET("products")
     suspend fun allProducts(): List<ProductsDto>
     //Single product
-    @GET("products")
+    @GET("products/{productId}")
     suspend fun singleProduct(@Path("productId") productId: Int): ProductsDto
     //All category
     @GET("products/categories")
     suspend fun allCategories(): List<String>
     //products in a category
-    @GET("products/category")
+    @GET("products/category/{category}")
     suspend fun productsInCategory(@Path("category") category: String): List<ProductsDto>
     //Get user cart
-    @GET("carts/user")
+    @GET("carts/user/{userId}")
     suspend fun usersCart(@Path("userId") userId: Int): List<CartsDto>
 
     //Add new cart

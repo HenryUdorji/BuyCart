@@ -6,10 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hashconcepts.buycart.presentation.components.ConnectivityStatus
 import com.hashconcepts.buycart.presentation.components.CustomScaffold
 import com.hashconcepts.buycart.presentation.screens.NavGraphs
 import com.hashconcepts.buycart.presentation.screens.destinations.*
@@ -45,6 +47,10 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             engine = navHostEngine
                         )
+
+                        if (route != SplashScreenDestination.route) {
+                            ConnectivityStatus()
+                        }
                     }
                 }
             }

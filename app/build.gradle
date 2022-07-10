@@ -74,9 +74,6 @@ dependencies {
     //System UI controller
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 
-    //Shimmer
-    implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
-
     //Pager
     implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
 

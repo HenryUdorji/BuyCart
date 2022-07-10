@@ -10,6 +10,8 @@ import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 data class HomeScreenState(
     val userIsLoggedIn: Boolean = false,
     val isLoading: Boolean = false,
-    val categories: List<String> = emptyList(),
+    val filterSelected: Boolean = false,
+    val selectedCategoryIndex: Int = 0,
+    val categories: MutableList<String> = mutableListOf(),
     val products: List<ProductsDto> = emptyList(),
 )

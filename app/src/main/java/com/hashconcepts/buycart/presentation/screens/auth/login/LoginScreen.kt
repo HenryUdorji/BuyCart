@@ -175,7 +175,7 @@ fun LoginScreen(
                     }
                 }
 
-                ConnectivityStatus()
+                //ConnectivityStatus()
             }
         })
 }
