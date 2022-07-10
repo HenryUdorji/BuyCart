@@ -66,7 +66,7 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = true) {
         homeViewModel.eventChannelFlow.collectLatest { uiEvent ->
-            when(uiEvent) {
+            when (uiEvent) {
                 is UIEvents.ErrorEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = uiEvent.message,
