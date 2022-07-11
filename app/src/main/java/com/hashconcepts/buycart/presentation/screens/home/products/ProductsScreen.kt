@@ -1,18 +1,15 @@
-package com.hashconcepts.buycart.presentation.screens.home
+package com.hashconcepts.buycart.presentation.screens.home.products
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -21,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,7 +30,10 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
+import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.presentation.components.Indicators
+import com.hashconcepts.buycart.presentation.screens.destinations.ProductDetailScreenDestination
+import com.hashconcepts.buycart.presentation.screens.home.productDetail.ProductDetailScreenNavArgs
 import com.hashconcepts.buycart.ui.theme.*
 import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
@@ -54,7 +53,7 @@ import java.lang.Exception
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    productsViewModel: ProductsViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -65,7 +64,7 @@ fun HomeScreen(
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
-        homeViewModel.eventChannelFlow.collectLatest { uiEvent ->
+        productsViewModel.eventChannelFlow.collectLatest { uiEvent ->
             when (uiEvent) {
                 is UIEvents.ErrorEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -73,6 +72,7 @@ fun HomeScreen(
                         duration = SnackbarDuration.Short
                     )
                 }
+                else -> {}
             }
         }
     }
@@ -86,7 +86,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(horizontal = 10.dp)
         ) {
-            if (homeViewModel.homeScreenState.isLoading) {
+            if (productsViewModel.productsScreenState.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier
                         .height(2.dp)
@@ -100,41 +100,60 @@ fun HomeScreen(
                 style = MaterialTheme.typography.h1,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp),
+                    .padding(top = 10.dp),
                 textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            SearchFilterSection(homeViewModel)
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            if (!homeViewModel.homeScreenState.filterSelected) {
-                OfferSection(homeViewModel.offerImages)
-            } else {
-                CategorySection(homeViewModel)
+            SearchFilterSection(productsViewModel.productsScreenState) {
+                productsViewModel.onEvents(
+                    ProductsScreenEvents.FilterClicked(!productsViewModel.productsScreenState.filterSelected)
+                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            ProductSection(homeViewModel)
+            if (!productsViewModel.productsScreenState.filterSelected) {
+                OfferSection(productsViewModel.offerImages)
+            } else {
+                CategorySection(productState = productsViewModel.productsScreenState) { category, index ->
+                    productsViewModel.onEvents(
+                        ProductsScreenEvents.CategorySelected(
+                            category = category,
+                            index = index
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ProductSection(
+                productState = productsViewModel.productsScreenState,
+                onAddProductToCart = {
+                    productsViewModel.onEvents(ProductsScreenEvents.AddProductToCart(productId = it))
+                },
+                onProductItemClicked = {
+                    navigator.navigate(ProductDetailScreenDestination(ProductDetailScreenNavArgs(productId = it)))
+                }
+            )
         }
     }
 }
 
 @Composable
-fun ProductSection(homeViewModel: HomeViewModel) {
-    val products = homeViewModel.homeScreenState.products
-    val state = homeViewModel.homeScreenState
-    val context = LocalContext.current
-
+fun ProductSection(
+    productState: ProductsScreenState,
+    onAddProductToCart: (Int) -> Unit,
+    onProductItemClicked: (Int) -> Unit,
+) {
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalArrangement = Arrangement.spacedBy(15.dp),
         columns = GridCells.Fixed(2),
         content = {
-            items(products) { product ->
+            items(productState.products) { product ->
                 Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier
@@ -145,9 +164,7 @@ fun ProductSection(homeViewModel: HomeViewModel) {
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {
-                            Toast
-                                .makeText(context, product.title, Toast.LENGTH_SHORT)
-                                .show()
+                            onProductItemClicked(product.id)
                         }
                 ) {
                     AsyncImage(
@@ -193,18 +210,14 @@ fun ProductSection(homeViewModel: HomeViewModel) {
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    homeViewModel.onEvents(HomeScreenEvents.AddProductToCart(product.id))
+                                    onAddProductToCart(product.id)
                                 }
                         ) {
-                            if (state.addingToCart && product.id == state.productInCart) {
-                                CircularProgressIndicator(
-                                    strokeWidth = 1.dp,
-                                    modifier = Modifier.size(15.dp),
-                                    color = secondaryColor
-                                )
+                            if (productState.addingToCart && product.id == productState.productInCart) {
+                                CircularProgress()
                             } else {
                                 Text(
-                                    text = if (state.addedToCart && product.id == state.productInCart) "Added" else "Add Cart",
+                                    text = if (productState.addedToCart && product.id == productState.productInCart) "Added" else "Add Cart",
                                     style = MaterialTheme.typography.h2,
                                     fontSize = 11.sp,
                                 )
@@ -217,9 +230,13 @@ fun ProductSection(homeViewModel: HomeViewModel) {
 }
 
 @Composable
-fun CategorySection(homeViewModel: HomeViewModel) {
-    val categories = homeViewModel.homeScreenState.categories
-    val categoryIndex = homeViewModel.homeScreenState.selectedCategoryIndex
+fun CategorySection(
+    productState: ProductsScreenState,
+    onCategorySelected: (String, Int) -> Unit,
+) {
+    val categories = productState.categories
+    val categoryIndex = productState.selectedCategoryIndex
+
     if (categories.isNotEmpty()) {
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), content = {
             items(categories) { category ->
@@ -235,12 +252,7 @@ fun CategorySection(homeViewModel: HomeViewModel) {
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {
-                            homeViewModel.onEvents(
-                                HomeScreenEvents.CategorySelected(
-                                    category,
-                                    categories.indexOf(category)
-                                )
-                            )
+                            onCategorySelected(category, categories.indexOf(category))
                         }
                 )
             }
@@ -295,7 +307,10 @@ fun OfferSection(offers: List<String>) {
 }
 
 @Composable
-fun SearchFilterSection(homeViewModel: HomeViewModel) {
+fun SearchFilterSection(
+    productState: ProductsScreenState,
+    onShowCategories: () -> Unit
+) {
     var searchText by remember { mutableStateOf("") }
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -329,14 +344,12 @@ fun SearchFilterSection(homeViewModel: HomeViewModel) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        IconButton(onClick = {
-            homeViewModel.onEvents(HomeScreenEvents.FilterClicked(!homeViewModel.homeScreenState.filterSelected))
-        }) {
+        IconButton(onClick = { onShowCategories() }) {
             Icon(
                 modifier = Modifier
                     .size(50.dp)
                     .clip(shape = RoundedCornerShape(size = 8.dp))
-                    .background(if (homeViewModel.homeScreenState.filterSelected) primaryColor else Color.White)
+                    .background(if (productState.filterSelected) primaryColor else Color.White)
                     .padding(5.dp),
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = null,

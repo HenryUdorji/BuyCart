@@ -1,12 +1,10 @@
-package com.hashconcepts.buycart.presentation.screens.home
+package com.hashconcepts.buycart.presentation.screens.home.products
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hashconcepts.buycart.data.local.SharedPrefUtil
-import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.domain.usecases.CartUseCase
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
 import com.hashconcepts.buycart.utils.Resource
@@ -16,7 +14,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -26,12 +23,12 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ProductsViewModel @Inject constructor(
     private val productUseCase: ProductUseCase,
     private val cartUseCase: CartUseCase,
 ): ViewModel() {
 
-    var homeScreenState by mutableStateOf(HomeScreenState())
+    var productsScreenState by mutableStateOf(ProductsScreenState())
         private set
 
     private val eventChannel = Channel<UIEvents>()
@@ -48,20 +45,19 @@ class HomeViewModel @Inject constructor(
         "https://github.com/HenryUdorji/BuyCart/raw/master/offersImages/offerImage3.jpg",
     )
 
-    fun onEvents(events: HomeScreenEvents) {
-        when(events) {
-            is HomeScreenEvents.FilterClicked -> {
-                homeScreenState = homeScreenState.copy(filterSelected = events.isClicked)
+    fun onEvents(events: ProductsScreenEvents) {
+        productsScreenState = when(events) {
+            is ProductsScreenEvents.FilterClicked -> {
+                productsScreenState.copy(filterSelected = events.isClicked)
             }
-            is HomeScreenEvents.CategorySelected -> {
+            is ProductsScreenEvents.CategorySelected -> {
                 fetchProducts(events.category)
-                homeScreenState = homeScreenState.copy(selectedCategoryIndex = events.index)
+                productsScreenState.copy(selectedCategoryIndex = events.index)
             }
-            is HomeScreenEvents.AddProductToCart -> {
+            is ProductsScreenEvents.AddProductToCart -> {
                 addToCart(events.productId)
-                homeScreenState = homeScreenState.copy(productInCart = events.productId)
+                productsScreenState.copy(productInCart = events.productId)
             }
-            is HomeScreenEvents.ProductClicked -> TODO()
         }
     }
 
@@ -69,15 +65,15 @@ class HomeViewModel @Inject constructor(
         productUseCase.products(category).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
-                    homeScreenState = homeScreenState.copy(isLoading = true)
+                    productsScreenState = productsScreenState.copy(isLoading = true)
                 }
                 is Resource.Error -> {
-                    homeScreenState = homeScreenState.copy(isLoading = false)
+                    productsScreenState = productsScreenState.copy(isLoading = false)
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
-                    homeScreenState = homeScreenState.copy(isLoading = false)
-                    homeScreenState = homeScreenState.copy(products = result.data ?: emptyList())
+                    productsScreenState = productsScreenState.copy(isLoading = false)
+                    productsScreenState = productsScreenState.copy(products = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)
@@ -87,16 +83,16 @@ class HomeViewModel @Inject constructor(
         productUseCase.categories().onEach { result ->
             when(result) {
                 is Resource.Loading -> {
-                    homeScreenState = homeScreenState.copy(isLoading = true)
+                    productsScreenState = productsScreenState.copy(isLoading = true)
                 }
                 is Resource.Error -> {
-                    homeScreenState = homeScreenState.copy(isLoading = false)
+                    productsScreenState = productsScreenState.copy(isLoading = false)
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
                     val toMutableList = result.data?.toMutableList()
                     toMutableList?.add(0, "All")
-                    homeScreenState = homeScreenState.copy(categories = (toMutableList!!))
+                    productsScreenState = productsScreenState.copy(categories = (toMutableList!!))
                 }
             }
         }.launchIn(viewModelScope)
@@ -106,15 +102,15 @@ class HomeViewModel @Inject constructor(
         cartUseCase.addToCart(productId).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
-                    homeScreenState = homeScreenState.copy(addingToCart = true)
+                    productsScreenState = productsScreenState.copy(addingToCart = true)
                 }
                 is Resource.Error -> {
-                    homeScreenState = homeScreenState.copy(addingToCart = false)
+                    productsScreenState = productsScreenState.copy(addingToCart = false)
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
-                    homeScreenState = homeScreenState.copy(addingToCart = false)
-                    homeScreenState = homeScreenState.copy(addedToCart = true)
+                    productsScreenState = productsScreenState.copy(addingToCart = false)
+                    productsScreenState = productsScreenState.copy(addedToCart = true)
                 }
             }
         }.launchIn(viewModelScope)

@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.presentation.screens.home
+package com.hashconcepts.buycart.presentation.screens.home.products
 
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 
@@ -7,7 +7,7 @@ import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
  * @project BuyCart
  * @author  ifechukwu.udorji
  */
-data class HomeScreenState(
+data class ProductsScreenState(
     val userIsLoggedIn: Boolean = false,
     val isLoading: Boolean = false,
     val filterSelected: Boolean = false,
