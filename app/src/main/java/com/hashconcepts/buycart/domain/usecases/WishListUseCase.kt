@@ -32,6 +32,16 @@ class WishListUseCase @Inject constructor(
         }
     }
 
+    fun productsInWishList(): Flow<Resource<List<Product>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val result = wishListRepository.productsInWishList()
+            emit(Resource.Success(result))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Unable to fetch products. Try again"))
+        }
+    }
+
     fun singleProductFromWishList(productId: Int): Flow<Resource<Product?>> = flow {
         try {
             emit(Resource.Loading())
