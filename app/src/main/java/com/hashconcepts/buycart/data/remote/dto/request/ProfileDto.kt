@@ -5,7 +5,7 @@ package com.hashconcepts.buycart.data.remote.dto.request
  * @project BuyCart
  * @author  ifechukwu.udorji
  */
-data class RegisterDto(
+data class ProfileDto(
     val username: String,
     val password: String,
     val email: String,

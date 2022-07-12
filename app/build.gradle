@@ -115,4 +115,10 @@ dependencies {
     //Navigation made easier
     implementation 'io.github.raamcosta.compose-destinations:core:1.5.13-beta'
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.5.13-beta'
+
+    //Room
+    implementation 'androidx.room:room-runtime:2.4.2'
+    kapt 'androidx.room:room-compiler:2.4.2'
+    //kotlin extension and coroutine support for room
+    implementation "androidx.room:room-ktx:2.4.2"
 }

@@ -1,7 +1,6 @@
 package com.hashconcepts.buycart.domain.usecases
 
-import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
-import com.hashconcepts.buycart.data.remote.dto.request.RegisterDto
+import com.hashconcepts.buycart.data.remote.dto.request.ProfileDto
 import com.hashconcepts.buycart.data.remote.dto.request.UserDto
 import com.hashconcepts.buycart.domain.repository.AuthRepository
 import com.hashconcepts.buycart.presentation.screens.auth.ValidationResult
@@ -29,8 +28,8 @@ class RegisterUserUseCase @Inject constructor(
     ): Flow<Resource<UserDto>> = flow {
         try {
             emit(Resource.Loading())
-            val registerDto = RegisterDto(username, password, email, phone)
-            val response = authRepository.registerUser(registerDto)
+            val profileDto = ProfileDto(username, password, email, phone)
+            val response = authRepository.registerUser(profileDto)
             emit(Resource.Success(response))
         } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))

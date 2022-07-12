@@ -1,12 +1,15 @@
 package com.hashconcepts.buycart.domain.usecases
 
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
+import com.hashconcepts.buycart.domain.model.Product
 import com.hashconcepts.buycart.domain.repository.ProductsRepository
 import com.hashconcepts.buycart.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
+import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -15,7 +18,7 @@ import javax.inject.Inject
  * @author  ifechukwu.udorji
  */
 class ProductUseCase @Inject constructor(
-    private val productsRepository: ProductsRepository
+    private val productsRepository: ProductsRepository,
 ) {
 
     fun categories(): Flow<Resource<List<String>>> = flow {

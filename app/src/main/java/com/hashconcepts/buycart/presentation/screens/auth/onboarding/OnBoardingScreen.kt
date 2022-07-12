@@ -22,10 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
-import com.hashconcepts.buycart.data.local.OnBoardingItem
+import com.hashconcepts.buycart.domain.model.OnBoardingItem
 import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.presentation.screens.auth.AuthViewModel
 import com.hashconcepts.buycart.presentation.screens.destinations.WelcomeScreenDestination

@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.data.local
+package com.hashconcepts.buycart.domain.model
 
 import com.hashconcepts.buycart.R
 

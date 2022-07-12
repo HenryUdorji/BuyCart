@@ -1,13 +1,12 @@
 package com.hashconcepts.buycart.data.remote
 
-import com.hashconcepts.buycart.data.remote.dto.AddCartDto
+import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
 import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
 import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
-import com.hashconcepts.buycart.data.remote.dto.request.RegisterDto
+import com.hashconcepts.buycart.data.remote.dto.request.ProfileDto
 import com.hashconcepts.buycart.data.remote.dto.request.UserDto
 import com.hashconcepts.buycart.data.remote.dto.response.LoginResponse
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
-import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,7 +25,7 @@ interface BuyCartApi {
     suspend fun loginUser(@Body loginDto: LoginDto): LoginResponse
     //Register
     @POST("users")
-    suspend fun registerUser(@Body registerDto: RegisterDto): UserDto
+    suspend fun registerUser(@Body profileDto: ProfileDto): UserDto
     //All product
     @GET("products")
     suspend fun allProducts(): List<ProductsDto>
@@ -53,7 +52,7 @@ interface BuyCartApi {
 
     //Get user
     @GET("users")
-    suspend fun user(@Path("userId") userId: Int): UserDto
+    suspend fun user(@Path("userId") userId: Int): ProfileDto
 
     //Update user
 }

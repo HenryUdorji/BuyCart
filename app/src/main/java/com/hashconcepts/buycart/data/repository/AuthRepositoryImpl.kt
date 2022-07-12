@@ -2,7 +2,7 @@ package com.hashconcepts.buycart.data.repository
 
 import com.hashconcepts.buycart.data.remote.BuyCartApi
 import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
-import com.hashconcepts.buycart.data.remote.dto.request.RegisterDto
+import com.hashconcepts.buycart.data.remote.dto.request.ProfileDto
 import com.hashconcepts.buycart.data.remote.dto.request.UserDto
 import com.hashconcepts.buycart.data.remote.dto.response.LoginResponse
 import com.hashconcepts.buycart.domain.repository.AuthRepository
@@ -20,11 +20,11 @@ class AuthRepositoryImpl @Inject constructor(
         return buyCartApi.loginUser(loginDto)
     }
 
-    override suspend fun registerUser(registerDto: RegisterDto): UserDto {
-        return buyCartApi.registerUser(registerDto)
+    override suspend fun registerUser(profileDto: ProfileDto): UserDto {
+        return buyCartApi.registerUser(profileDto)
     }
 
-    override suspend fun userProfile(userId: Int): UserDto {
+    override suspend fun userProfile(userId: Int): ProfileDto {
         return buyCartApi.user(userId)
     }
 

@@ -1,7 +1,7 @@
 package com.hashconcepts.buycart.data.repository
 
 import com.hashconcepts.buycart.data.remote.BuyCartApi
-import com.hashconcepts.buycart.data.remote.dto.AddCartDto
+import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
 import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
 import com.hashconcepts.buycart.domain.repository.CartRepository
 import okhttp3.ResponseBody

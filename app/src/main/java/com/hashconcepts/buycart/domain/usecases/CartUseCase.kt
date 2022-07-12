@@ -1,7 +1,7 @@
 package com.hashconcepts.buycart.domain.usecases
 
-import com.hashconcepts.buycart.data.remote.dto.AddCartDto
-import com.hashconcepts.buycart.data.remote.dto.ProductInCart
+import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
+import com.hashconcepts.buycart.data.remote.dto.request.ProductInCart
 import com.hashconcepts.buycart.domain.repository.CartRepository
 import com.hashconcepts.buycart.utils.Resource
 import kotlinx.coroutines.flow.Flow

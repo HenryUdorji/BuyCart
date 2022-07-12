@@ -1,4 +1,4 @@
-package com.hashconcepts.buycart.data.remote.dto
+package com.hashconcepts.buycart.data.remote.dto.request
 
 data class AddCartDto(
     val userId: Int,

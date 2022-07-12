@@ -1,12 +1,7 @@
 package com.hashconcepts.buycart.domain.repository
 
-import com.hashconcepts.buycart.data.remote.dto.AddCartDto
+import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
 import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
-import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
-import com.hashconcepts.buycart.data.remote.dto.request.RegisterDto
-import com.hashconcepts.buycart.data.remote.dto.request.UserDto
-import com.hashconcepts.buycart.data.remote.dto.response.LoginResponse
-import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import okhttp3.ResponseBody
 
 /**

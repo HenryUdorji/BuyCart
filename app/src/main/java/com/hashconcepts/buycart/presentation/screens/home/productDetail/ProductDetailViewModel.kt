@@ -6,7 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
+import com.hashconcepts.buycart.domain.model.Product
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
+import com.hashconcepts.buycart.domain.usecases.WishListUseCase
 import com.hashconcepts.buycart.presentation.screens.navArgs
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
@@ -25,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val productUseCase: ProductUseCase,
+    private val wishListUseCase: WishListUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,9 +44,14 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     fun onEvents(events: ProductDetailScreenEvents) {
-        when(events) {
+        productDetailScreenState = when(events) {
             is ProductDetailScreenEvents.AddProductToWishList -> {
-                //save to room
+                addProductToWishList(events.productsDto)
+                productDetailScreenState.copy(addingToWishList = true)
+            }
+            is ProductDetailScreenEvents.DeleteProductFromWishList -> {
+                deleteProductFromWishList(events.product)
+                productDetailScreenState.copy(addedToWishList = false)
             }
         }
     }
@@ -62,6 +71,61 @@ class ProductDetailViewModel @Inject constructor(
                         isLoading = false,
                         productDetail = result.data
                     )
+
+                    //check if product is in wishlist
+                    singleProductFromWishList(productId)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun addProductToWishList(productsDto: ProductsDto) {
+        wishListUseCase.addProductToWishList(productsDto).onEach { result ->
+            productDetailScreenState = when(result) {
+                is Resource.Loading -> {
+                    productDetailScreenState.copy(addingToWishList = true)
+                }
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                    productDetailScreenState.copy(addingToWishList = false)
+                }
+                is Resource.Success -> {
+                    productDetailScreenState.copy(addingToWishList = false, addedToWishList = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun singleProductFromWishList(productId: Int) {
+        wishListUseCase.singleProductFromWishList(productId).onEach { result ->
+            when(result) {
+                is Resource.Loading -> { }
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    productDetailScreenState = if (result.data != null) {
+                        productDetailScreenState.copy(addedToWishList = true)
+                    } else {
+                        productDetailScreenState.copy(addedToWishList = false)
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun deleteProductFromWishList(product: Product) {
+        wishListUseCase.deleteProductFromWishList(product).onEach { result ->
+            productDetailScreenState = when(result) {
+                is Resource.Loading -> {
+                    productDetailScreenState.copy(addingToWishList = true)
+                }
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                    productDetailScreenState.copy(addingToWishList = false)
+                }
+                is Resource.Success -> {
+                    productDetailScreenState.copy(addingToWishList = false, addedToWishList = false)
                 }
             }
         }.launchIn(viewModelScope)

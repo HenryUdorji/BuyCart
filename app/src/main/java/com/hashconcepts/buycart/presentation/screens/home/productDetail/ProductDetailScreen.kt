@@ -15,20 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
+import com.hashconcepts.buycart.data.mapper.toProduct
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.ui.theme.*
@@ -82,10 +77,33 @@ fun ProductDetailScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+
+            if (productDetailViewModel.productDetailScreenState.isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth(),
+                    color = errorColor
+                )
+            }
+
             ToolbarSection(
                 productDetailState = productDetailViewModel.productDetailScreenState,
                 onNavigateUp = { navigator.navigateUp() },
-                onProductAddedToWishList = { /*TODO*/ }
+                onProductAddedToWishList = {
+                    productDetailViewModel.productDetailScreenState.productDetail?.let { productDto ->
+                        productDetailViewModel.onEvents(ProductDetailScreenEvents.AddProductToWishList(
+                            productsDto = productDto
+                        ))
+                    }
+                },
+                onProductDeletedFromWishList = {
+                    productDetailViewModel.productDetailScreenState.productDetail?.let { productDto ->
+                        productDetailViewModel.onEvents(ProductDetailScreenEvents.DeleteProductFromWishList(
+                            product = productDto.toProduct()
+                        ))
+                    }
+                }
             )
 
             Column(
@@ -93,14 +111,16 @@ fun ProductDetailScreen(
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
             ) {
-                productDetailViewModel.productDetailScreenState.productDetail?.let { product ->
+                productDetailViewModel.productDetailScreenState.productDetail?.let { productDto ->
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ProductImageSection(product)
+                    ProductImageSection(productDto)
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ProductDetailSection(product)
+                    ProductDetailSection(productDto) {
+
+                    }
                 }
             }
         }
@@ -109,7 +129,10 @@ fun ProductDetailScreen(
 }
 
 @Composable
-fun ColumnScope.ProductDetailSection(product: ProductsDto) {
+fun ColumnScope.ProductDetailSection(
+    productDto: ProductsDto,
+    onBuyNowClicked: () -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
@@ -124,7 +147,7 @@ fun ColumnScope.ProductDetailSection(product: ProductsDto) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = product.title,
+                text = productDto.title,
                 style = MaterialTheme.typography.h2,
                 fontSize = 18.sp,
                 modifier = Modifier.fillMaxWidth(0.7f)
@@ -151,7 +174,7 @@ fun ColumnScope.ProductDetailSection(product: ProductsDto) {
         Text(text = "Description", style = MaterialTheme.typography.h2, fontSize = 14.sp)
 
         Text(
-            text = product.description,
+            text = productDto.description,
             style = MaterialTheme.typography.body1,
             fontSize = 14.sp,
             modifier = Modifier.weight(1f)
@@ -163,7 +186,7 @@ fun ColumnScope.ProductDetailSection(product: ProductsDto) {
         ) {
             Column {
                 Text(text = "Price", style = MaterialTheme.typography.body1, color = disableColor)
-                Text(text = "$${product.price}", style = MaterialTheme.typography.h2)
+                Text(text = "$${productDto.price}", style = MaterialTheme.typography.h2)
             }
 
             TextButton(
@@ -171,9 +194,9 @@ fun ColumnScope.ProductDetailSection(product: ProductsDto) {
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = primaryColor
                 ),
-                onClick = { /*TODO*/ }) {
+                onClick = { onBuyNowClicked }) {
                 Text(
-                    text = "Add Card",
+                    text = "Buy now",
                     style = MaterialTheme.typography.button,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
@@ -184,9 +207,9 @@ fun ColumnScope.ProductDetailSection(product: ProductsDto) {
 }
 
 @Composable
-fun ProductImageSection(product: ProductsDto) {
+fun ProductImageSection(productDto: ProductsDto) {
     AsyncImage(
-        model = product.image,
+        model = productDto.image,
         contentDescription = null,
         placeholder = painterResource(id = R.drawable.placeholder_image),
         alignment = Alignment.Center,
@@ -201,7 +224,8 @@ fun ProductImageSection(product: ProductsDto) {
 fun ToolbarSection(
     productDetailState: ProductDetailScreenState,
     onNavigateUp: () -> Unit,
-    onProductAddedToWishList: () -> Unit
+    onProductAddedToWishList: () -> Unit,
+    onProductDeletedFromWishList: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -223,7 +247,9 @@ fun ToolbarSection(
             textAlign = TextAlign.Center
         )
 
-        IconButton(onClick = onProductAddedToWishList) {
+        IconButton(
+            onClick = if (productDetailState.addedToWishList) onProductDeletedFromWishList else onProductAddedToWishList
+        ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier

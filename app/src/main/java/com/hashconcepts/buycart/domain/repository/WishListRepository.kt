@@ -8,9 +8,8 @@ import com.hashconcepts.buycart.domain.model.Product
  * @project BuyCart
  * @author  ifechukwu.udorji
  */
-interface ProductsRepository {
-    suspend fun allProducts(): List<ProductsDto>
-    suspend fun singleProduct(productId: Int): ProductsDto
-    suspend fun allCategories(): List<String>
-    suspend fun productsInCategory(category: String): List<ProductsDto>
+interface WishListRepository {
+    suspend fun addProductToWishList(productsDto: ProductsDto)
+    suspend fun singleProductFromWishList(productId: Int): Product?
+    suspend fun deleteProductFromWishList(product: Product)
 }

@@ -1,7 +1,10 @@
 package com.hashconcepts.buycart.data.repository
 
+import com.hashconcepts.buycart.data.local.BuyCartDao
+import com.hashconcepts.buycart.data.mapper.toProduct
 import com.hashconcepts.buycart.data.remote.BuyCartApi
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
+import com.hashconcepts.buycart.domain.model.Product
 import com.hashconcepts.buycart.domain.repository.ProductsRepository
 import javax.inject.Inject
 
@@ -11,7 +14,7 @@ import javax.inject.Inject
  * @author  ifechukwu.udorji
  */
 class ProductsRepositoryImpl @Inject constructor(
-    private val buyCartApi: BuyCartApi
+    private val buyCartApi: BuyCartApi,
 ): ProductsRepository{
     override suspend fun allProducts(): List<ProductsDto> {
         return buyCartApi.allProducts()
