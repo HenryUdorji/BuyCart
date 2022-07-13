@@ -18,7 +18,7 @@ import com.hashconcepts.buycart.domain.model.Product
         Product::class
     ],
     exportSchema = false,
-    version = 1
+    version = 2
 )
 @TypeConverters(BuyCartConverters::class)
 abstract class BuyCartDatabase : RoomDatabase() {

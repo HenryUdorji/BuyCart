@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.domain.model.Product
 import com.hashconcepts.buycart.domain.usecases.WishListUseCase
 import com.hashconcepts.buycart.utils.Resource
@@ -40,7 +41,14 @@ class WishListViewModel @Inject constructor(
         when(events) {
             is WishListScreenEvents.DeleteClicked -> {
                 deleteProductFromWishList(events.product)
-                wishListScreenState = wishListScreenState.copy(deleting = true)
+            }
+            is WishListScreenEvents.DecrementClicked -> {
+                if (events.product.quantity > 1) {
+                    updateProductInWishList(quantity = events.product.quantity - 1, events.product)
+                }
+            }
+            is WishListScreenEvents.IncrementClicked -> {
+                updateProductInWishList(quantity = events.product.quantity + 1, events.product)
             }
         }
     }
@@ -78,16 +86,35 @@ class WishListViewModel @Inject constructor(
 
     private fun deleteProductFromWishList(product: Product) {
         wishListUseCase.deleteProductFromWishList(product).onEach { result ->
-            wishListScreenState = when(result) {
-                is Resource.Loading -> {
-                    wishListScreenState.copy(deleting = true)
-                }
+            when(result) {
+                is Resource.Loading -> {}
                 is Resource.Error -> {
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
-                    wishListScreenState.copy(deleting = false)
                 }
                 is Resource.Success -> {
-                    wishListScreenState.copy(deleting = false)
+                    productsInWishList()
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun updateProductInWishList(quantity: Int, product: Product) {
+        val product = Product(
+            quantity = quantity,
+            image = product.image,
+            price = product.price,
+            title = product.title,
+            id = product.id
+        )
+
+        wishListUseCase.updateProductInWishList(product).onEach { result ->
+            when(result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    productsInWishList()
                 }
             }
         }.launchIn(viewModelScope)

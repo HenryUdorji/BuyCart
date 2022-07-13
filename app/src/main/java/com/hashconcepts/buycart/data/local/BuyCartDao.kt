@@ -23,6 +23,9 @@ interface BuyCartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addProductToWishList(product: Product)
 
+    @Update
+    suspend fun updateProductInWishList(product: Product)
+
     @Query("SELECT * FROM wishlist WHERE id = :productId")
     suspend fun singleProductFromWishList(productId: Int): Product?
 

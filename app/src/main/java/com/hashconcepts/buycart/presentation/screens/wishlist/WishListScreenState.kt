@@ -11,5 +11,4 @@ data class WishListScreenState(
     val isLoading: Boolean = false,
     val products: List<Product> = emptyList(),
     val product: Product? = null,
-    val deleting: Boolean = false,
 )

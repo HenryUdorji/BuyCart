@@ -27,6 +27,7 @@ fun ProductsDto.toProduct(): Product {
         id = id,
         title = title,
         image = image,
-        price = price
+        price = price,
+        quantity = 1
     )
 }
