@@ -10,7 +10,7 @@ Product Screen             | Product and Category Screen     | Product Detail Sc
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="screenshots/product_screen.jpg"/>            |  <img src="screenshots/product_category_screen.jpg"/>  | <img src="screenshots/product_detail_screen.jpg"/>  |
 
-WishList Screen            | Cart Screen               | Cart Bottom Sheet Screen
+WishList Screen            | Cart Screen               | Cart Screen
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="screenshots/wishlist_screen.jpg"/>           |  <img src="screenshots/cart_screen.jpg"/>              | <img src="screenshots/cart_bottom_sheet_screen.jpg"/>  |
 
