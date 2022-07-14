@@ -8,7 +8,7 @@ Android shopping app built with Jetpack Compose consuming [FAKE STORE API](https
 
 Product Screen             | Product and Category Screen     | Product Detail Screen
 :-------------------------:|:-------------------------:|:-------------------------:
-<img src="screenshots/product_screen.jpg" width="360" height="800"/>  |  <img src="screenshots/product_category_screen.jpg" width="360" height="800"/>  | <img src="screenshots/product_detail_screen.jpg" width="360" height="800"/>  |
+<img src="screenshots/product_screen.jpg" width="300" height="667"/>  |  <img src="screenshots/product_category_screen.jpg" width="300" height="667"/>  | <img src="screenshots/product_detail_screen.jpg" width="300" height="667"/>  |
 
 ## Tech Stack.
 - [Kotlin](https://developer.android.com/kotlin) - Kotlin is a programming language that can run on JVM. Google has announced Kotlin as one of its officially supported programming languages in Android Studio; and the Android community is migrating at a pace from Java to Kotlin.
