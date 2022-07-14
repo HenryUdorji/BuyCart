@@ -9,16 +9,13 @@ import androidx.room.PrimaryKey
  * @author  ifechukwu.udorji
  */
 
-@Entity(tableName = "wishlist")
-data class Product(
+@Entity(tableName = "cart")
+data class ProductInCart(
     @PrimaryKey
     val id: Int,
     val image: String,
     val price: String,
     val title: String,
-    val quantity: Int
-) {
-    fun formatPrice(): String {
-        return String.format("%.2f", price.toDouble())
-    }
-}
+    val quantity: Int,
+    val pricePerItem: Double,
+)

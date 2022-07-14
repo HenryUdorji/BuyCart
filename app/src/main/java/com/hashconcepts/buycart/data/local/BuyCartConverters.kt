@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken
 import com.hashconcepts.buycart.data.remote.dto.request.Address
 import com.hashconcepts.buycart.data.remote.dto.request.Name
 import com.hashconcepts.buycart.domain.model.PaymentInfo
+import com.hashconcepts.buycart.domain.model.Product
 import javax.inject.Inject
 
 /**
@@ -51,5 +52,4 @@ class BuyCartConverters @Inject constructor(
         val type = object : TypeToken<PaymentInfo>() {}.type
         return gson.fromJson(json, type)
     }
-
 }

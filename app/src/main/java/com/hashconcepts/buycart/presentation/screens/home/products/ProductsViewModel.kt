@@ -5,6 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hashconcepts.buycart.data.mapper.toProduct
+import com.hashconcepts.buycart.data.mapper.toProductInCart
+import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.domain.usecases.CartUseCase
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
 import com.hashconcepts.buycart.utils.Resource
@@ -14,6 +17,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -37,6 +41,7 @@ class ProductsViewModel @Inject constructor(
     init {
         fetchCategories()
         fetchProducts()
+        usersCart()
     }
 
     val offerImages = listOf(
@@ -46,17 +51,19 @@ class ProductsViewModel @Inject constructor(
     )
 
     fun onEvents(events: ProductsScreenEvents) {
-        productsScreenState = when(events) {
+        when(events) {
             is ProductsScreenEvents.FilterClicked -> {
-                productsScreenState.copy(filterSelected = events.isClicked)
+                productsScreenState = productsScreenState.copy(filterSelected = events.isClicked)
             }
             is ProductsScreenEvents.CategorySelected -> {
                 fetchProducts(events.category)
-                productsScreenState.copy(selectedCategoryIndex = events.index)
+                productsScreenState = productsScreenState.copy(selectedCategoryIndex = events.index)
             }
             is ProductsScreenEvents.AddProductToCart -> {
-                addToCart(events.productId)
-                productsScreenState.copy(productInCart = events.productId)
+                addProductToCart(events.productsDto)
+            }
+            is ProductsScreenEvents.DeleteProductFromCart -> {
+                deleteProductToCart(events.productsDto)
             }
         }
     }
@@ -98,8 +105,8 @@ class ProductsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun addToCart(productId: Int) {
-        cartUseCase.addToCart(productId).onEach { result ->
+    private fun addProductToCart(productsDto: ProductsDto) {
+        cartUseCase.addProductToCart(productsDto.toProductInCart()).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
                     productsScreenState = productsScreenState.copy(addingToCart = true)
@@ -109,8 +116,40 @@ class ProductsViewModel @Inject constructor(
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
+                    usersCart()
                     productsScreenState = productsScreenState.copy(addingToCart = false)
-                    productsScreenState = productsScreenState.copy(addedToCart = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun deleteProductToCart(productsDto: ProductsDto) {
+        cartUseCase.deleteProductInCart(productsDto.toProductInCart()).onEach { result ->
+            when(result) {
+                is Resource.Loading -> {
+                    productsScreenState = productsScreenState.copy(addingToCart = true)
+                }
+                is Resource.Error -> {
+                    productsScreenState = productsScreenState.copy(addingToCart = false)
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    usersCart()
+                    productsScreenState = productsScreenState.copy(addingToCart = false)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun usersCart() {
+        cartUseCase.usersCart().onEach { result ->
+            when(result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    productsScreenState = productsScreenState.copy(productInCart = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)

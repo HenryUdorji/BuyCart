@@ -9,6 +9,4 @@ import com.hashconcepts.buycart.domain.model.Product
  */
 sealed class WishListScreenEvents {
     data class DeleteClicked(val product: Product): WishListScreenEvents()
-    data class IncrementClicked(val product: Product): WishListScreenEvents()
-    data class DecrementClicked(val product: Product): WishListScreenEvents()
 }

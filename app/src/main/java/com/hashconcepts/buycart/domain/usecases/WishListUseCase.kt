@@ -32,16 +32,6 @@ class WishListUseCase @Inject constructor(
         }
     }
 
-    fun updateProductInWishList(product: Product): Flow<Resource<Unit>> = flow {
-        try {
-            emit(Resource.Loading())
-            val result = wishListRepository.updateProductInWishList(product)
-            emit(Resource.Success(result))
-        } catch (e: Exception) {
-            emit(Resource.Error(e.localizedMessage ?: "Unable to update product. Try again"))
-        }
-    }
-
     fun productsInWishList(): Flow<Resource<List<Product>>> = flow {
         try {
             emit(Resource.Loading())

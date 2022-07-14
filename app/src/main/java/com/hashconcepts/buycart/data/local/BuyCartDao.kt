@@ -2,8 +2,8 @@ package com.hashconcepts.buycart.data.local
 
 import androidx.room.*
 import com.hashconcepts.buycart.domain.model.Product
+import com.hashconcepts.buycart.domain.model.ProductInCart
 import com.hashconcepts.buycart.domain.model.UserProfile
-import retrofit2.http.DELETE
 
 /**
  * @created 28/06/2022 - 4:36 PM
@@ -23,9 +23,6 @@ interface BuyCartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addProductToWishList(product: Product)
 
-    @Update
-    suspend fun updateProductInWishList(product: Product)
-
     @Query("SELECT * FROM wishlist WHERE id = :productId")
     suspend fun singleProductFromWishList(productId: Int): Product?
 
@@ -34,5 +31,17 @@ interface BuyCartDao {
 
     @Delete
     suspend fun deleteFromWishList(product: Product)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addProductToCart(productInCart: ProductInCart)
+
+    @Query("SELECT * FROM cart")
+    suspend fun productsInCart(): List<ProductInCart>
+
+    @Update
+    suspend fun updateProductInCart(productInCart: ProductInCart)
+
+    @Delete
+    suspend fun deleteProductFromCart(productInCart: ProductInCart)
 
 }

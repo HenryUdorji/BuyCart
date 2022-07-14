@@ -83,12 +83,6 @@ fun WishListScreen(
                             onDeleteClicked = {
                                 wishListViewModel.onEvents(WishListScreenEvents.DeleteClicked(product))
                             },
-                            onIncrement = {
-                                wishListViewModel.onEvents(WishListScreenEvents.IncrementClicked(product))
-                            },
-                            onDecrement = {
-                                wishListViewModel.onEvents(WishListScreenEvents.DecrementClicked(product))
-                            },
                             onClick = {
                                 navigator.navigate(ProductDetailScreenDestination(product.id))
                             }

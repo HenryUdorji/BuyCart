@@ -30,6 +30,9 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
+import com.hashconcepts.buycart.data.mapper.toProduct
+import com.hashconcepts.buycart.data.mapper.toProductInCart
+import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.presentation.screens.destinations.ProductDetailScreenDestination
@@ -131,8 +134,11 @@ fun HomeScreen(
 
             ProductSection(
                 productState = productsViewModel.productsScreenState,
-                onAddProductToCart = {
-                    productsViewModel.onEvents(ProductsScreenEvents.AddProductToCart(productId = it))
+                onDeleteProductFromCart = { productDto ->
+                    productsViewModel.onEvents(ProductsScreenEvents.DeleteProductFromCart(productDto))
+                },
+                onAddToCartCart = { productDto ->
+                    productsViewModel.onEvents(ProductsScreenEvents.AddProductToCart(productDto))
                 },
                 onProductItemClicked = {
                     navigator.navigate(ProductDetailScreenDestination(ProductDetailScreenNavArgs(productId = it)))
@@ -145,15 +151,18 @@ fun HomeScreen(
 @Composable
 fun ProductSection(
     productState: ProductsScreenState,
-    onAddProductToCart: (Int) -> Unit,
+    onAddToCartCart: (ProductsDto) -> Unit,
+    onDeleteProductFromCart: (ProductsDto) -> Unit,
     onProductItemClicked: (Int) -> Unit,
 ) {
+    val productInCart = productState.productInCart
+
     LazyVerticalGrid(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalArrangement = Arrangement.spacedBy(15.dp),
         columns = GridCells.Fixed(2),
         content = {
-            items(productState.products) { product ->
+            items(productState.products) { productsDto ->
                 Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier
@@ -164,11 +173,11 @@ fun ProductSection(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {
-                            onProductItemClicked(product.id)
+                            onProductItemClicked(productsDto.id)
                         }
                 ) {
                     AsyncImage(
-                        model = product.image,
+                        model = productsDto.image,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(id = R.drawable.placeholder_image),
@@ -181,7 +190,7 @@ fun ProductSection(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
-                        text = product.title,
+                        text = productsDto.title,
                         style = MaterialTheme.typography.h2,
                         fontSize = 12.sp,
                         maxLines = 2,
@@ -196,7 +205,7 @@ fun ProductSection(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "$${product.price}",
+                            text = "$${productsDto.formatPrice()}",
                             style = MaterialTheme.typography.h2,
                             fontSize = 13.sp
                         )
@@ -210,14 +219,18 @@ fun ProductSection(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    onAddProductToCart(product.id)
+                                     if (productInCart.contains(productsDto.toProductInCart())) {
+                                         onDeleteProductFromCart(productsDto)
+                                     } else {
+                                         onAddToCartCart(productsDto)
+                                     }
                                 }
                         ) {
-                            if (productState.addingToCart && product.id == productState.productInCart) {
+                            if (productState.addingToCart && productInCart.contains(productsDto.toProductInCart())) {
                                 CircularProgress()
                             } else {
                                 Text(
-                                    text = if (productState.addedToCart && product.id == productState.productInCart) "Added" else "Add Cart",
+                                    text = if (productInCart.contains(productsDto.toProductInCart())) "Added" else "Add Cart",
                                     style = MaterialTheme.typography.h2,
                                     fontSize = 11.sp,
                                 )

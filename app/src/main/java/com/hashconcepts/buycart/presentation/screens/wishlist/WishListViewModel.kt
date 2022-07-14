@@ -42,14 +42,6 @@ class WishListViewModel @Inject constructor(
             is WishListScreenEvents.DeleteClicked -> {
                 deleteProductFromWishList(events.product)
             }
-            is WishListScreenEvents.DecrementClicked -> {
-                if (events.product.quantity > 1) {
-                    updateProductInWishList(quantity = events.product.quantity - 1, events.product)
-                }
-            }
-            is WishListScreenEvents.IncrementClicked -> {
-                updateProductInWishList(quantity = events.product.quantity + 1, events.product)
-            }
         }
     }
 
@@ -86,28 +78,6 @@ class WishListViewModel @Inject constructor(
 
     private fun deleteProductFromWishList(product: Product) {
         wishListUseCase.deleteProductFromWishList(product).onEach { result ->
-            when(result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
-                }
-                is Resource.Success -> {
-                    productsInWishList()
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun updateProductInWishList(quantity: Int, product: Product) {
-        val product = Product(
-            quantity = quantity,
-            image = product.image,
-            price = product.price,
-            title = product.title,
-            id = product.id
-        )
-
-        wishListUseCase.updateProductInWishList(product).onEach { result ->
             when(result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {

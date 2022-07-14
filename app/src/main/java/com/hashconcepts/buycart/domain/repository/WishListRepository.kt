@@ -10,7 +10,6 @@ import com.hashconcepts.buycart.domain.model.Product
  */
 interface WishListRepository {
     suspend fun addProductToWishList(productsDto: ProductsDto)
-    suspend fun updateProductInWishList(product: Product)
     suspend fun productsInWishList(): List<Product>
     suspend fun singleProductFromWishList(productId: Int): Product?
     suspend fun deleteProductFromWishList(product: Product)

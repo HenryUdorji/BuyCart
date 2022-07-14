@@ -1,8 +1,6 @@
 package com.hashconcepts.buycart.domain.repository
 
-import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
-import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
-import okhttp3.ResponseBody
+import com.hashconcepts.buycart.domain.model.ProductInCart
 
 /**
  * @created 28/06/2022 - 8:02 PM
@@ -10,6 +8,8 @@ import okhttp3.ResponseBody
  * @author  ifechukwu.udorji
  */
 interface CartRepository {
-    suspend fun usersCart(userId: Int): List<CartsDto>
-    suspend fun addToCart(addCartDto: AddCartDto): ResponseBody
+    suspend fun usersCart(): List<ProductInCart>
+    suspend fun addProductToCart(productInCart: ProductInCart)
+    suspend fun updateProductInCart(productInCart: ProductInCart)
+    suspend fun deleteProductFromCart(productInCart: ProductInCart)
 }

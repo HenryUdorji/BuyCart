@@ -38,8 +38,8 @@ fun WishListOrderContainer(
     isWishList: Boolean = true,
     onClick: () -> Unit,
     onDeleteClicked: () -> Unit,
-    onIncrement: () -> Unit,
-    onDecrement: () -> Unit
+    onIncrement: () -> Unit = {},
+    onDecrement: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -95,7 +95,7 @@ fun WishListOrderContainer(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "$${product.price}",
+                        text = "$${product.formatPrice()}",
                         style = MaterialTheme.typography.h2,
                         fontSize = 14.sp
                     )

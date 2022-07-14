@@ -7,4 +7,8 @@ data class ProductsDto(
     val image: String,
     val price: String,
     val title: String
-)
+) {
+    fun formatPrice(): String {
+        return String.format("%.2f", price.toDouble())
+    }
+}

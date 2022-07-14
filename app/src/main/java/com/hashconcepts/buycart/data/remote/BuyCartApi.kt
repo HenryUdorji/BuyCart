@@ -1,7 +1,5 @@
 package com.hashconcepts.buycart.data.remote
 
-import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
-import com.hashconcepts.buycart.data.remote.dto.request.CartsDto
 import com.hashconcepts.buycart.data.remote.dto.request.LoginDto
 import com.hashconcepts.buycart.data.remote.dto.request.ProfileDto
 import com.hashconcepts.buycart.data.remote.dto.request.UserDto
@@ -38,12 +36,6 @@ interface BuyCartApi {
     //products in a category
     @GET("products/category/{category}")
     suspend fun productsInCategory(@Path("category") category: String): List<ProductsDto>
-    //Get user cart
-    @GET("carts/user/{userId}")
-    suspend fun usersCart(@Path("userId") userId: Int): List<CartsDto>
-    //Add new cart
-    @POST("carts")
-    suspend fun addToCart(@Body addCartDto: AddCartDto): ResponseBody
     //update a cart
 
     //Delete a cart

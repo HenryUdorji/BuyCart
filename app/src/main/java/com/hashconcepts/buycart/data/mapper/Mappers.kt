@@ -3,6 +3,7 @@ package com.hashconcepts.buycart.data.mapper
 import com.hashconcepts.buycart.data.remote.dto.request.ProfileDto
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.domain.model.Product
+import com.hashconcepts.buycart.domain.model.ProductInCart
 import com.hashconcepts.buycart.domain.model.UserProfile
 
 /**
@@ -29,5 +30,37 @@ fun ProductsDto.toProduct(): Product {
         image = image,
         price = price,
         quantity = 1
+    )
+}
+
+fun Product.toProductInCart(): ProductInCart {
+    return ProductInCart(
+        id = id,
+        title = title,
+        image = image,
+        price = price,
+        quantity = 1,
+        pricePerItem = price.toDouble()
+    )
+}
+
+fun ProductInCart.toProduct(): Product {
+    return Product(
+        id = id,
+        title = title,
+        image = image,
+        price = price,
+        quantity = quantity
+    )
+}
+
+fun ProductsDto.toProductInCart(): ProductInCart {
+    return ProductInCart(
+        id = id,
+        title = title,
+        image = image,
+        price = price,
+        quantity = 1,
+        pricePerItem = price.toDouble()
     )
 }

@@ -21,10 +21,6 @@ class WishListRepositoryImpl @Inject constructor(
         return buyCartDao.addProductToWishList(productsDto.toProduct())
     }
 
-    override suspend fun updateProductInWishList(product: Product) {
-        return buyCartDao.updateProductInWishList(product)
-    }
-
     override suspend fun productsInWishList(): List<Product> {
         return buyCartDao.getProductsInWishList()
     }

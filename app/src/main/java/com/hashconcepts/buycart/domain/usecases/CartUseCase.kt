@@ -1,14 +1,10 @@
 package com.hashconcepts.buycart.domain.usecases
 
-import com.hashconcepts.buycart.data.remote.dto.request.AddCartDto
-import com.hashconcepts.buycart.data.remote.dto.request.ProductInCart
+import com.hashconcepts.buycart.domain.model.ProductInCart
 import com.hashconcepts.buycart.domain.repository.CartRepository
 import com.hashconcepts.buycart.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.ResponseBody
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -21,20 +17,43 @@ class CartUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
 
-    fun addToCart(productId: Int): Flow<Resource<ResponseBody>> = flow {
+    fun addProductToCart(productInCart: ProductInCart): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
-            val addCartDto = AddCartDto(
-                userId = 5, date = "2020-05-13", products = listOf(
-                    ProductInCart(productId = productId, quantity = 3)
-                )
-            )
-            val response = cartRepository.addToCart(addCartDto)
+            val response = cartRepository.addProductToCart(productInCart)
             emit(Resource.Success(response))
-        } catch (e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
-        } catch (e: IOException) {
-            emit(Resource.Error("Couldn't reach server. Check your internet connection."))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Unable to add product to cart"))
+        }
+    }
+
+    fun deleteProductInCart(productInCart: ProductInCart): Flow<Resource<Unit>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = cartRepository.deleteProductFromCart(productInCart)
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Unable to delete product from cart"))
+        }
+    }
+
+    fun updateProductInCart(productInCart: ProductInCart): Flow<Resource<Unit>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = cartRepository.updateProductInCart(productInCart)
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Unable to update product in cart"))
+        }
+    }
+
+    fun usersCart(): Flow<Resource<List<ProductInCart>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = cartRepository.usersCart()
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "Unable to fetch cart"))
         }
     }
 }
