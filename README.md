@@ -4,7 +4,7 @@ Android shopping app built with Jetpack Compose consuming [FAKE STORE API](https
 
 - I am trying to learn and follow some standard Android architecture designs, pardon any mistakes you might encounter
 
-##ScreenShots
+## ScreenShots
 
 Product Screen             | Product and Category Screen     | Product Detail Screen
 :-------------------------:|:-------------------------:|:-------------------------:
