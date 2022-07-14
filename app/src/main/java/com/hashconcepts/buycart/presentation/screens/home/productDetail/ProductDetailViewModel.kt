@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.domain.model.Product
+import com.hashconcepts.buycart.domain.model.ProductInCart
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
 import com.hashconcepts.buycart.domain.usecases.WishListUseCase
+import com.hashconcepts.buycart.presentation.screens.cart.CheckoutState
 import com.hashconcepts.buycart.presentation.screens.navArgs
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
@@ -18,6 +20,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -35,6 +38,9 @@ class ProductDetailViewModel @Inject constructor(
     var productDetailScreenState by mutableStateOf(ProductDetailScreenState())
         private set
 
+    var checkoutState by mutableStateOf(CheckoutState())
+        private set
+
     private val eventChannel = Channel<UIEvents>()
     val eventChannelFlow = eventChannel.receiveAsFlow()
 
@@ -44,15 +50,28 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     fun onEvents(events: ProductDetailScreenEvents) {
-        productDetailScreenState = when(events) {
+        when(events) {
             is ProductDetailScreenEvents.AddProductToWishList -> {
                 addProductToWishList(events.productsDto)
-                productDetailScreenState.copy(addingToWishList = true)
+                productDetailScreenState = productDetailScreenState.copy(addingToWishList = true)
             }
             is ProductDetailScreenEvents.DeleteProductFromWishList -> {
                 deleteProductFromWishList(events.product)
-                productDetailScreenState.copy(addedToWishList = false)
+                productDetailScreenState = productDetailScreenState.copy(addedToWishList = false)
             }
+            is ProductDetailScreenEvents.BuyNowClicked -> {
+                computeTotal(events.product)
+            }
+        }
+    }
+
+    private fun computeTotal(product: Product) {
+        viewModelScope.launch {
+            eventChannel.send(UIEvents.SuccessEvent)
+            checkoutState = checkoutState.copy(
+                price = product.price,
+                grandTotal = (product.price.toDouble() + 30.00).toString()
+            )
         }
     }
 

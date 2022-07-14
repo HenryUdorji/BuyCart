@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,12 +26,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.data.mapper.toProduct
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
+import com.hashconcepts.buycart.presentation.components.CheckoutBottomSheetDialog
 import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.ui.theme.*
 import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * @created 11/07/2022 - 11:04 AM
@@ -42,6 +45,7 @@ data class ProductDetailScreenNavArgs(
     val productId: Int
 )
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination(navArgsDelegate = ProductDetailScreenNavArgs::class)
 @Composable
 fun ProductDetailScreen(
@@ -55,6 +59,9 @@ fun ProductDetailScreen(
     }
 
     val scaffoldState = rememberScaffoldState()
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         productDetailViewModel.eventChannelFlow.collectLatest { uiEvent ->
@@ -65,7 +72,9 @@ fun ProductDetailScreen(
                         duration = SnackbarDuration.Short
                     )
                 }
-                else -> {}
+                else -> {
+                    bottomSheetState.show()
+                }
             }
         }
     }
@@ -92,16 +101,20 @@ fun ProductDetailScreen(
                 onNavigateUp = { navigator.navigateUp() },
                 onProductAddedToWishList = {
                     productDetailViewModel.productDetailScreenState.productDetail?.let { productDto ->
-                        productDetailViewModel.onEvents(ProductDetailScreenEvents.AddProductToWishList(
-                            productsDto = productDto
-                        ))
+                        productDetailViewModel.onEvents(
+                            ProductDetailScreenEvents.AddProductToWishList(
+                                productsDto = productDto
+                            )
+                        )
                     }
                 },
                 onProductDeletedFromWishList = {
                     productDetailViewModel.productDetailScreenState.productDetail?.let { productDto ->
-                        productDetailViewModel.onEvents(ProductDetailScreenEvents.DeleteProductFromWishList(
-                            product = productDto.toProduct()
-                        ))
+                        productDetailViewModel.onEvents(
+                            ProductDetailScreenEvents.DeleteProductFromWishList(
+                                product = productDto.toProduct()
+                            )
+                        )
                     }
                 }
             )
@@ -119,12 +132,23 @@ fun ProductDetailScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     ProductDetailSection(productDto) {
-
+                        productDetailViewModel.onEvents(
+                            ProductDetailScreenEvents.BuyNowClicked(
+                                productDto.toProduct()
+                            )
+                        )
                     }
                 }
             }
         }
-
+        CheckoutBottomSheetDialog(
+            bottomSheetState = bottomSheetState,
+            checkoutState = productDetailViewModel.checkoutState
+        ) {
+            scope.launch {
+                bottomSheetState.hide()
+            }
+        }
     }
 }
 
@@ -138,7 +162,7 @@ fun ColumnScope.ProductDetailSection(
         modifier = Modifier
             .weight(1f)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(30.dp))
+            .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(backgroundColor)
             .padding(20.dp)
     ) {
@@ -194,7 +218,7 @@ fun ColumnScope.ProductDetailSection(
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = primaryColor
                 ),
-                onClick = { onBuyNowClicked }) {
+                onClick = { onBuyNowClicked() }) {
                 Text(
                     text = "Buy now",
                     style = MaterialTheme.typography.button,

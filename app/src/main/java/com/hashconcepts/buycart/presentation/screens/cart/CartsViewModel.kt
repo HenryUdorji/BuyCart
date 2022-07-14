@@ -5,12 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hashconcepts.buycart.data.mapper.toProductInCart
-import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
-import com.hashconcepts.buycart.domain.model.Product
 import com.hashconcepts.buycart.domain.model.ProductInCart
 import com.hashconcepts.buycart.domain.usecases.CartUseCase
-import com.hashconcepts.buycart.presentation.screens.wishlist.WishListScreenEvents
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -32,6 +29,9 @@ class CartsViewModel @Inject constructor(
 ) : ViewModel() {
 
     var cartScreenState by mutableStateOf(CartsScreenState())
+        private set
+
+    var checkoutState by mutableStateOf(CheckoutState())
         private set
 
     private val eventChannel = Channel<UIEvents>()
@@ -62,6 +62,26 @@ class CartsViewModel @Inject constructor(
                     events.productInCart
                 )
             }
+            is CartsScreenEvents.CheckoutClicked -> {
+                computeTotal(events.productInCart)
+            }
+        }
+    }
+
+    private fun computeTotal(productInCart: List<ProductInCart>) {
+        viewModelScope.launch {
+            var price = 0.0
+            productInCart.forEach { product ->
+                price += product.price.toDouble()
+            }
+            val grandTotal = price + 30.00
+
+            eventChannel.send(UIEvents.SuccessEvent)
+            checkoutState = checkoutState.copy(
+                items = productInCart.size.toString(),
+                price = price.toString(),
+                grandTotal = grandTotal.toString()
+            )
         }
     }
 

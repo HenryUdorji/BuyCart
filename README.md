@@ -1,8 +1,14 @@
 
 # BuyCart 🛒
-A fake shopping app built with Jetpack Compose consuming [FAKE STORE API](https://fakestoreapi.com/)
+Android shopping app built with Jetpack Compose consuming [FAKE STORE API](https://fakestoreapi.com/)
 
+- I am trying to learn and follow some standard architectural practices, pardon some mistakes you might encounter
 
+##ScreenShots
+
+Product Screen             | Product and Category Screen     | Product Detail Screen
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="screenshots/product_screen.jpg" width="250" height="500"/>  |  <img src="screenshots/product_category_screen.jpg" width="250" height="500"/>  | <img src="screenshots/product_detail_screen.jpg" width="250" height="500"/>  |
 
 ## Tech Stack.
 - [Kotlin](https://developer.android.com/kotlin) - Kotlin is a programming language that can run on JVM. Google has announced Kotlin as one of its officially supported programming languages in Android Studio; and the Android community is migrating at a pace from Java to Kotlin.
@@ -22,6 +28,3 @@ A fake shopping app built with Jetpack Compose consuming [FAKE STORE API](https:
 - [Logging Interceptor](https://github.com/square/okhttp/blob/master/okhttp-logging-interceptor/README.md) -  logs HTTP request and response data.
 - [Coil](https://coil-kt.github.io/coil/compose/)- An image loading library for Android backed by Kotlin Coroutines.
 - [Timber](https://github.com/JakeWharton/timber)- A logger with a small, extensible API which provides utility on top of Android's normal Log class.
-
-- CI/CD:
-    - [GitHub Actions](https://github.com/features/actions) - GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want.

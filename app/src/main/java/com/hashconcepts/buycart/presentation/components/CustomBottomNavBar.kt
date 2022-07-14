@@ -31,7 +31,6 @@ import com.hashconcepts.buycart.ui.theme.primaryColor
 
 sealed class BottomNavItem(val iconRes: Int, val destination: Destination) {
     object HomeScreen: BottomNavItem(R.drawable.ic_home, HomeScreenDestination)
-    object SearchScreen: BottomNavItem(R.drawable.ic_search, SearchScreenDestination)
     object CartScreen: BottomNavItem(R.drawable.ic_cart, CartScreenDestination)
     object WishListScreen: BottomNavItem(R.drawable.ic_wishlist, WishListScreenDestination)
     object ProfileScreen: BottomNavItem(R.drawable.ic_profile, ProfileScreenDestination)
@@ -40,7 +39,6 @@ sealed class BottomNavItem(val iconRes: Int, val destination: Destination) {
 fun bottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem.HomeScreen,
-        BottomNavItem.SearchScreen,
         BottomNavItem.WishListScreen,
         BottomNavItem.CartScreen,
         BottomNavItem.ProfileScreen,
@@ -60,7 +58,6 @@ fun CustomBottomNavBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topEnd = 30.dp, topStart = 30.dp))
             .background(color = Color.White)
             .height(70.dp)
     ) {

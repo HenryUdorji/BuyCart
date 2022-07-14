@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     showBottomBar = route in listOf(
                         HomeScreenDestination.route,
-                        SearchScreenDestination.route,
                         WishListScreenDestination.route,
                         CartScreenDestination.route,
                         ProfileScreenDestination.route
