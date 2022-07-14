@@ -32,3 +32,8 @@ WishList Screen            | Cart Screen               | Cart Screen
 - [Logging Interceptor](https://github.com/square/okhttp/blob/master/okhttp-logging-interceptor/README.md) -  logs HTTP request and response data.
 - [Coil](https://coil-kt.github.io/coil/compose/)- An image loading library for Android backed by Kotlin Coroutines.
 - [Timber](https://github.com/JakeWharton/timber)- A logger with a small, extensible API which provides utility on top of Android's normal Log class.
+
+
+## Credits
+- [JoeyKanyi](https://github.com/JoelKanyi/Joomia) - Joey's repo gave me a lot of insight and resources
+- [Nazmul Hassan](https://www.behance.net/gallery/135792591/eCommerce-app?tracking_source=search_projects_recommended%7Cecommerce%20%20app) - UI inspiration came from this beautiful Behance project
