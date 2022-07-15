@@ -80,7 +80,7 @@ class CartsViewModel @Inject constructor(
             checkoutState = checkoutState.copy(
                 items = productInCart.size.toString(),
                 price = price.toString(),
-                grandTotal = grandTotal.toString()
+                grandTotal = String().format("%.2f", grandTotal.toString())
             )
         }
     }
