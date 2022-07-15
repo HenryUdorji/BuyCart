@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,10 +32,10 @@ import com.hashconcepts.buycart.ui.theme.primaryColor
  */
 
 sealed class BottomNavItem(val iconRes: Int, val destination: Destination) {
-    object HomeScreen: BottomNavItem(R.drawable.ic_home, HomeScreenDestination)
-    object CartScreen: BottomNavItem(R.drawable.ic_cart, CartScreenDestination)
-    object WishListScreen: BottomNavItem(R.drawable.ic_wishlist, WishListScreenDestination)
-    object ProfileScreen: BottomNavItem(R.drawable.ic_profile, ProfileScreenDestination)
+    object HomeScreen : BottomNavItem(R.drawable.ic_home, HomeScreenDestination)
+    object CartScreen : BottomNavItem(R.drawable.ic_cart, CartScreenDestination)
+    object WishListScreen : BottomNavItem(R.drawable.ic_wishlist, WishListScreenDestination)
+    object ProfileScreen : BottomNavItem(R.drawable.ic_profile, ProfileScreenDestination)
 }
 
 fun bottomNavItems(): List<BottomNavItem> {
@@ -53,43 +55,40 @@ fun CustomBottomNavBar(
     navController: NavController,
     navItems: List<BottomNavItem> = bottomNavItems(),
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White)
-            .height(70.dp)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    BottomNavigation(
+        backgroundColor = Color.White,
+        elevation = 5.dp
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+        navItems.forEach { item ->
+            val selectedNavItem = currentRoute?.contains(item.destination.route) == true
 
-        navItems.forEach { navItem ->
-            val selectedNavItem =  currentRoute?.contains(navItem.destination.route) == true
-            val selectedColor = if (selectedNavItem) primaryColor else disableColor
-
-            Icon(
-                painter = painterResource(id = navItem.iconRes),
-                contentDescription = null,
-                tint = selectedColor,
-                modifier = Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
+            BottomNavigationItem(
+                selected = selectedNavItem,
+                selectedContentColor = primaryColor,
+                unselectedContentColor = disableColor,
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.iconRes),
+                        contentDescription = null,
+                    )
+                },
+                onClick = {
                     if (!selectedNavItem) {
                         //navController.popBackStack()
-                        navController.navigate(navItem.destination.route) {
+                        navController.navigate(item.destination.route) {
                             navController.graph.startDestinationRoute?.let { route ->
                                 popUpTo(route) {
                                     saveState = true
-                                    inclusive = true
                                 }
                             }
                             launchSingleTop = true
                             restoreState = true
                         }
                     }
-                }
+                },
             )
         }
     }
