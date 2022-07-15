@@ -70,7 +70,7 @@ class ProductDetailViewModel @Inject constructor(
             eventChannel.send(UIEvents.SuccessEvent)
             checkoutState = checkoutState.copy(
                 price = product.price,
-                grandTotal = (product.price.toDouble() + 30.00).toString()
+                grandTotal = String.format("%.2f", product.price.toDouble() + 30.00)
             )
         }
     }
