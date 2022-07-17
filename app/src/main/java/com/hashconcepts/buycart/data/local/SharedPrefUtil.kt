@@ -29,4 +29,9 @@ class SharedPrefUtil @Inject constructor(
     fun saveUserAccessToken(token: String) {
         sharedPreferences.edit().putString(Constants.USER_IS_LOGGED_IN, token).apply()
     }
+
+    fun deleteAccessToken(): Boolean {
+        sharedPreferences.edit().remove(Constants.USER_IS_LOGGED_IN).apply()
+        return userIsLoggedIn()
+    }
 }

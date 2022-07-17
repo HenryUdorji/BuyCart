@@ -18,6 +18,7 @@ data class UserProfile(
     val username: String,
     val password: String,
     val phone: String,
+    val imageUrl: String = "https://github.com/HenryUdorji/BuyCart/raw/master/offersImages/profile.jpg",
     val name: Name,
     val address: Address,
     val paymentInfo: PaymentInfo? = null,

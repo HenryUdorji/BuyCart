@@ -10,6 +10,7 @@ import com.hashconcepts.buycart.data.mapper.toProductInCart
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.domain.usecases.CartUseCase
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
+import com.hashconcepts.buycart.domain.usecases.ProfileUseCase
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ import javax.inject.Inject
 class ProductsViewModel @Inject constructor(
     private val productUseCase: ProductUseCase,
     private val cartUseCase: CartUseCase,
+    private val profileUseCase: ProfileUseCase,
 ): ViewModel() {
 
     var productsScreenState by mutableStateOf(ProductsScreenState())
@@ -42,6 +44,7 @@ class ProductsViewModel @Inject constructor(
         fetchCategories()
         fetchProducts()
         usersCart()
+        fetchUserProfile()
     }
 
     val offerImages = listOf(
@@ -150,6 +153,20 @@ class ProductsViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     productsScreenState = productsScreenState.copy(productInCart = result.data ?: emptyList())
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun fetchUserProfile() {
+        profileUseCase.userProfile(1).onEach { result ->
+            when(result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    profileUseCase.saveUserProfile(result.data!!)
                 }
             }
         }.launchIn(viewModelScope)

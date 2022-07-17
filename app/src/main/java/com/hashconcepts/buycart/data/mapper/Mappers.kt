@@ -19,7 +19,7 @@ fun ProfileDto.toUserProfile(): UserProfile {
         username = username,
         name = name,
         address = address,
-        phone = phone
+        phone = phone,
     )
 }
 

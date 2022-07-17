@@ -1,13 +1,7 @@
 package com.hashconcepts.buycart.di
 
-import com.hashconcepts.buycart.data.repository.AuthRepositoryImpl
-import com.hashconcepts.buycart.data.repository.CartRepositoryImpl
-import com.hashconcepts.buycart.data.repository.ProductsRepositoryImpl
-import com.hashconcepts.buycart.data.repository.WishListRepositoryImpl
-import com.hashconcepts.buycart.domain.repository.AuthRepository
-import com.hashconcepts.buycart.domain.repository.CartRepository
-import com.hashconcepts.buycart.domain.repository.ProductsRepository
-import com.hashconcepts.buycart.domain.repository.WishListRepository
+import com.hashconcepts.buycart.data.repository.*
+import com.hashconcepts.buycart.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +35,8 @@ abstract class RepositoryModule {
     @Binds
     @ViewModelScoped
     abstract fun bindsWishListRepository(wishListRepositoryImpl: WishListRepositoryImpl): WishListRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindsProfileRepository(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
 }
