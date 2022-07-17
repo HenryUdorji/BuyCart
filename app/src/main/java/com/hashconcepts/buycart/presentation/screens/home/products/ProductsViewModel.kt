@@ -53,7 +53,6 @@ class ProductsViewModel @Inject constructor(
                 eventChannel.send(UIEvents.SuccessEvent)
             }
         }
-        //productsScreenState = productsScreenState.copy(userIsLoggedIn = sharedPrefUtil.userIsLoggedIn())
         fetchCategories()
         fetchProducts()
         usersCart()

@@ -9,7 +9,6 @@ import com.hashconcepts.buycart.domain.model.ProductInCart
  * @author  ifechukwu.udorji
  */
 data class ProductsScreenState(
-    val userIsLoggedIn: Boolean = false,
     val isLoading: Boolean = false,
     val filterSelected: Boolean = false,
     val selectedCategoryIndex: Int = 0,
