@@ -14,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import com.hashconcepts.buycart.ui.theme.*
 
@@ -31,6 +31,7 @@ fun CustomTextField(
     text: String,
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit,
     onHideKeyboard: () -> Unit,
 ) {
@@ -63,6 +64,7 @@ fun CustomTextField(
             },
             textStyle = MaterialTheme.typography.body1,
             shape = RoundedCornerShape(10.dp),
+            visualTransformation = visualTransformation,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
                 keyboardType = keyboardType
@@ -72,6 +74,37 @@ fun CustomTextField(
                     onHideKeyboard()
                 }
             )
+        )
+    }
+}
+
+class DateVisualTransformation: VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val trimmed = if (text.text.length >= 8) text.text.substring(0..7) else text.text
+        var output = ""
+        for (i in trimmed.indices) {
+            output += trimmed[i]
+            if (i < 4 && i % 2 == 1) output += "-"
+        }
+        val dateTranslator = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 1) return offset
+                if (offset <= 3) return offset + 1
+                if (offset <= 7) return offset + 2
+                return 10
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 1) return offset
+                if (offset <= 4) return offset - 1
+                if (offset <= 9) return offset - 2
+                return 8
+            }
+        }
+
+        return TransformedText(
+            AnnotatedString(output),
+            dateTranslator
         )
     }
 }

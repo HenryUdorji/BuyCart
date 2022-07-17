@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -17,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.domain.model.UserProfile
 import com.hashconcepts.buycart.presentation.components.CustomTextField
+import com.hashconcepts.buycart.presentation.components.DateVisualTransformation
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -74,6 +76,7 @@ fun PaymentInfoScreen(
                     label = "Card Number",
                     text = cardNumber,
                     placeholder = "Enter Card Number",
+                    keyboardType = KeyboardType.Number,
                     onValueChange = { cardNumber = it }) {
                     keyboardController?.hide()
                 }
@@ -90,6 +93,8 @@ fun PaymentInfoScreen(
                     label = "Card Expiry",
                     text = cardExpiryDate,
                     placeholder = "Enter Card Expiry",
+                    visualTransformation = DateVisualTransformation(),
+                    keyboardType = KeyboardType.Number,
                     onValueChange = { cardExpiryDate = it }) {
                     keyboardController?.hide()
                 }
@@ -98,6 +103,7 @@ fun PaymentInfoScreen(
                     label = "Card CVV",
                     text = cardCVV,
                     placeholder = "Enter Card CVV",
+                    keyboardType = KeyboardType.Number,
                     onValueChange = { cardCVV = it }) {
                     keyboardController?.hide()
                 }
