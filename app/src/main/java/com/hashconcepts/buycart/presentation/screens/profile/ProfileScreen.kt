@@ -26,6 +26,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.domain.model.UserProfile
 import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.PaymentInfoScreenDestination
 import com.hashconcepts.buycart.presentation.screens.destinations.ProfileScreenDestination
 import com.hashconcepts.buycart.presentation.screens.destinations.WelcomeScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
@@ -109,7 +110,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(25.dp))
 
                 ProfileItem(icon = R.drawable.ic_card, title = "Payment Information") {
-
+                    navigator.navigate(PaymentInfoScreenDestination)
                 }
 
                 Spacer(modifier = Modifier.height(25.dp))
