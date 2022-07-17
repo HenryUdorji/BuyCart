@@ -43,13 +43,13 @@ class BuyCartConverters @Inject constructor(
     }
 
     @TypeConverter
-    fun fromPaymentInfo(paymentInfo: PaymentInfo): String {
+    fun fromPaymentInfo(paymentInfo: PaymentInfo?): String {
         return gson.toJson(paymentInfo)
     }
 
     @TypeConverter
-    fun toPaymentInfo(json: String): PaymentInfo {
-        val type = object : TypeToken<PaymentInfo>() {}.type
+    fun toPaymentInfo(json: String): PaymentInfo? {
+        val type = object : TypeToken<PaymentInfo?>() {}.type
         return gson.fromJson(json, type)
     }
 }

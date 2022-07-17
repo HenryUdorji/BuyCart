@@ -22,14 +22,14 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveUserProfile(userProfile: UserProfile) {
-        TODO("Not yet implemented")
+        return buyCartDao.saveUserProfile(userProfile)
     }
 
     override suspend fun getUserProfile(): UserProfile {
-        TODO("Not yet implemented")
+        return buyCartDao.getUserProfile()
     }
 
     override suspend fun updateUserProfile(userProfile: UserProfile) {
-        TODO("Not yet implemented")
+        return buyCartDao.updateUserProfile(userProfile)
     }
 }

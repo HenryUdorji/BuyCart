@@ -36,6 +36,7 @@ import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
 import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.presentation.components.Indicators
 import com.hashconcepts.buycart.presentation.screens.destinations.ProductDetailScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.WelcomeScreenDestination
 import com.hashconcepts.buycart.presentation.screens.home.productDetail.ProductDetailScreenNavArgs
 import com.hashconcepts.buycart.ui.theme.*
 import com.hashconcepts.buycart.utils.UIEvents
@@ -75,7 +76,11 @@ fun HomeScreen(
                         duration = SnackbarDuration.Short
                     )
                 }
-                else -> {}
+                else -> {
+                    //Logout User
+                    navigator.popBackStack()
+                    navigator.navigate(WelcomeScreenDestination)
+                }
             }
         }
     }

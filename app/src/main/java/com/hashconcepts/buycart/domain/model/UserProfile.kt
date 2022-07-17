@@ -11,7 +11,7 @@ import com.hashconcepts.buycart.data.remote.dto.request.Name
  * @author  ifechukwu.udorji
  */
 
-@Entity
+@Entity(tableName = "user_profile")
 data class UserProfile(
     @PrimaryKey
     val email: String,

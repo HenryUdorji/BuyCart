@@ -5,9 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hashconcepts.buycart.data.local.SharedPrefUtil
 import com.hashconcepts.buycart.data.mapper.toProduct
 import com.hashconcepts.buycart.data.mapper.toProductInCart
 import com.hashconcepts.buycart.data.remote.dto.response.ProductsDto
+import com.hashconcepts.buycart.domain.model.PaymentInfo
+import com.hashconcepts.buycart.domain.model.UserProfile
 import com.hashconcepts.buycart.domain.usecases.CartUseCase
 import com.hashconcepts.buycart.domain.usecases.ProductUseCase
 import com.hashconcepts.buycart.domain.usecases.ProfileUseCase
@@ -18,6 +21,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -32,7 +37,8 @@ class ProductsViewModel @Inject constructor(
     private val productUseCase: ProductUseCase,
     private val cartUseCase: CartUseCase,
     private val profileUseCase: ProfileUseCase,
-): ViewModel() {
+    private val sharedPrefUtil: SharedPrefUtil,
+) : ViewModel() {
 
     var productsScreenState by mutableStateOf(ProductsScreenState())
         private set
@@ -40,7 +46,14 @@ class ProductsViewModel @Inject constructor(
     private val eventChannel = Channel<UIEvents>()
     val eventChannelFlow = eventChannel.receiveAsFlow()
 
+
     init {
+        if (!sharedPrefUtil.userIsLoggedIn()) {
+            viewModelScope.launch {
+                eventChannel.send(UIEvents.SuccessEvent)
+            }
+        }
+        //productsScreenState = productsScreenState.copy(userIsLoggedIn = sharedPrefUtil.userIsLoggedIn())
         fetchCategories()
         fetchProducts()
         usersCart()
@@ -54,7 +67,7 @@ class ProductsViewModel @Inject constructor(
     )
 
     fun onEvents(events: ProductsScreenEvents) {
-        when(events) {
+        when (events) {
             is ProductsScreenEvents.FilterClicked -> {
                 productsScreenState = productsScreenState.copy(filterSelected = events.isClicked)
             }
@@ -73,7 +86,7 @@ class ProductsViewModel @Inject constructor(
 
     private fun fetchProducts(category: String = "All") {
         productUseCase.products(category).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Loading -> {
                     productsScreenState = productsScreenState.copy(isLoading = true)
                 }
@@ -83,7 +96,8 @@ class ProductsViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     productsScreenState = productsScreenState.copy(isLoading = false)
-                    productsScreenState = productsScreenState.copy(products = result.data ?: emptyList())
+                    productsScreenState =
+                        productsScreenState.copy(products = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)
@@ -91,7 +105,7 @@ class ProductsViewModel @Inject constructor(
 
     private fun fetchCategories() {
         productUseCase.categories().onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Loading -> {
                     productsScreenState = productsScreenState.copy(isLoading = true)
                 }
@@ -110,7 +124,7 @@ class ProductsViewModel @Inject constructor(
 
     private fun addProductToCart(productsDto: ProductsDto) {
         cartUseCase.addProductToCart(productsDto.toProductInCart()).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Loading -> {
                     productsScreenState = productsScreenState.copy(addingToCart = true)
                 }
@@ -128,7 +142,7 @@ class ProductsViewModel @Inject constructor(
 
     private fun deleteProductToCart(productsDto: ProductsDto) {
         cartUseCase.deleteProductInCart(productsDto.toProductInCart()).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Loading -> {
                     productsScreenState = productsScreenState.copy(addingToCart = true)
                 }
@@ -146,13 +160,14 @@ class ProductsViewModel @Inject constructor(
 
     private fun usersCart() {
         cartUseCase.usersCart().onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
-                    productsScreenState = productsScreenState.copy(productInCart = result.data ?: emptyList())
+                    productsScreenState =
+                        productsScreenState.copy(productInCart = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)
@@ -160,14 +175,22 @@ class ProductsViewModel @Inject constructor(
 
     private fun fetchUserProfile() {
         profileUseCase.userProfile(1).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     eventChannel.send(UIEvents.ErrorEvent(result.message!!))
                 }
                 is Resource.Success -> {
-                    profileUseCase.saveUserProfile(result.data!!)
+                    saveUserProfile(result.data!!)
                 }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun saveUserProfile(userProfile: UserProfile) {
+        profileUseCase.saveUserProfile(userProfile).onEach { result ->
+            if (!result) {
+                eventChannel.send(UIEvents.ErrorEvent("Failed to save user profile"))
             }
         }.launchIn(viewModelScope)
     }

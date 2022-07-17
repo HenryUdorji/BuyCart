@@ -32,11 +32,12 @@ class ProfileUseCase @Inject constructor(
         }
     }
 
-    fun saveUserProfile(userProfile: UserProfile): Flow<Resource<UserProfile>> = flow {
+    fun saveUserProfile(userProfile: UserProfile): Flow<Boolean> = flow {
         try {
             profileRepository.saveUserProfile(userProfile)
+            emit(true)
         } catch (e: Exception) {
-            emit(Resource.Error("Failed to save user profile"))
+            emit(false)
         }
     }
 

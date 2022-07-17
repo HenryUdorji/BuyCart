@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.domain.model.UserProfile
+import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
 import com.hashconcepts.buycart.presentation.screens.destinations.ProfileScreenDestination
 import com.hashconcepts.buycart.presentation.screens.destinations.WelcomeScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
@@ -68,7 +69,7 @@ fun ProfileScreen(
                 }
                 else -> {
                     //Logout User
-                    navigator.popBackStack(route = ProfileScreenDestination.route, inclusive = true)
+                    navigator.popBackStack()
                     navigator.navigate(WelcomeScreenDestination)
                 }
             }
@@ -95,22 +96,23 @@ fun ProfileScreen(
                     .weight(1f)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                     .background(Color.White)
+                    .padding(20.dp)
             ) {
                 ProfileHeaderSection(state.userProfile)
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(50.dp))
 
                 ProfileItem(icon = R.drawable.ic_cart, title = "My Order") {
 
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(25.dp))
 
                 ProfileItem(icon = R.drawable.ic_card, title = "Payment Information") {
 
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(25.dp))
 
                 ProfileItem(icon = R.drawable.ic_log_out, title = "Log out") {
                     profileViewModel.logoutUser()
@@ -125,9 +127,7 @@ fun ProfileHeaderSection(userProfile: UserProfile?) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         AsyncImage(
             model = userProfile?.imageUrl,
@@ -179,7 +179,7 @@ fun ProfileItem(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
+                .clip(CircleShape)
                 .background(backgroundColor)
                 .size(40.dp)
                 .padding(5.dp)
@@ -187,13 +187,19 @@ fun ProfileItem(
             Icon(painter = painterResource(id = icon), contentDescription = null)
         }
 
+        Spacer(modifier = Modifier.width(10.dp))
+
         Text(
             text = title,
             style = MaterialTheme.typography.h2,
             fontSize = 16.sp,
             modifier = Modifier.weight(1f)
         )
-        
-        Icon(painter = painterResource(id = R.drawable.ic_arrow_forward), contentDescription = null)
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_forward),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
     }
 }

@@ -37,6 +37,6 @@ interface BuyCartApi {
     @GET("products/category/{category}")
     suspend fun productsInCategory(@Path("category") category: String): List<ProductsDto>
     //Get user
-    @GET("users")
+    @GET("users/{userId}")
     suspend fun user(@Path("userId") userId: Int): ProfileDto
 }

@@ -17,8 +17,11 @@ interface BuyCartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUserProfile(userProfile: UserProfile)
 
-    @Query("SELECT * FROM userprofile")
+    @Query("SELECT * FROM user_profile")
     suspend fun getUserProfile(): UserProfile
+
+    @Update
+    suspend fun updateUserProfile(userProfile: UserProfile)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addProductToWishList(product: Product)
@@ -43,5 +46,4 @@ interface BuyCartDao {
 
     @Delete
     suspend fun deleteProductFromCart(productInCart: ProductInCart)
-
 }

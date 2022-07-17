@@ -20,7 +20,7 @@ import com.hashconcepts.buycart.domain.model.ProductInCart
         ProductInCart::class
     ],
     exportSchema = false,
-    version = 6
+    version = 7
 )
 @TypeConverters(BuyCartConverters::class)
 abstract class BuyCartDatabase : RoomDatabase() {
