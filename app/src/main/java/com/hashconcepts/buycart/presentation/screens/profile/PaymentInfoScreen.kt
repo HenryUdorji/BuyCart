@@ -8,7 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -65,11 +67,15 @@ fun PaymentInfoScreen(
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                     .background(Color.White)
             ) {
+                val focusManager = LocalFocusManager.current
                 val keyboardController = LocalSoftwareKeyboardController.current
                 var cardNumber by remember { mutableStateOf("") }
                 var cardName by remember { mutableStateOf("") }
                 var cardExpiryDate by remember { mutableStateOf("") }
                 var cardCVV by remember { mutableStateOf("") }
+
+                val maxCVV = 3
+                val maxCardNumber = 16
 
 
                 CustomTextField(
@@ -77,7 +83,12 @@ fun PaymentInfoScreen(
                     text = cardNumber,
                     placeholder = "Enter Card Number",
                     keyboardType = KeyboardType.Number,
-                    onValueChange = { cardNumber = it }) {
+                    onValueChange = {
+                        cardNumber = it.take(maxCardNumber)
+                        if (it.length > maxCardNumber) {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    }) {
                     keyboardController?.hide()
                 }
 
@@ -95,7 +106,12 @@ fun PaymentInfoScreen(
                     placeholder = "Enter Card Expiry",
                     visualTransformation = DateVisualTransformation(),
                     keyboardType = KeyboardType.Number,
-                    onValueChange = { cardExpiryDate = it }) {
+                    onValueChange = {
+                        cardExpiryDate = it.take(maxCVV)
+                        if (it.length > maxCardNumber) {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    }) {
                     keyboardController?.hide()
                 }
 
