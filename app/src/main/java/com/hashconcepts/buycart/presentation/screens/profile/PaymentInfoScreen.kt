@@ -13,12 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hashconcepts.buycart.domain.model.UserProfile
 import com.hashconcepts.buycart.presentation.components.CustomTextField
 import com.hashconcepts.buycart.presentation.components.DateVisualTransformation
 import com.hashconcepts.buycart.ui.theme.backgroundColor
@@ -44,7 +42,8 @@ fun PaymentInfoScreen(
     }
 
     val scaffoldState = rememberScaffoldState()
-
+    val userProfile = profileViewModel.profileScreenState.userProfile
+    val paymentInfo = userProfile?.paymentInfo
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -69,10 +68,10 @@ fun PaymentInfoScreen(
             ) {
                 val focusManager = LocalFocusManager.current
                 val keyboardController = LocalSoftwareKeyboardController.current
-                var cardNumber by remember { mutableStateOf("") }
-                var cardName by remember { mutableStateOf("") }
-                var cardExpiryDate by remember { mutableStateOf("") }
-                var cardCVV by remember { mutableStateOf("") }
+                var cardNumber by remember { mutableStateOf(paymentInfo?.cardNumber ?: "") }
+                var cardName by remember { mutableStateOf(paymentInfo?.cardHolderName ?: "") }
+                var cardExpiryDate by remember { mutableStateOf(paymentInfo?.cardExpiryDate ?: "") }
+                var cardCVV by remember { mutableStateOf(paymentInfo?.cardCVV ?: "") }
 
                 val maxCVV = 3
                 val maxCardNumber = 16
@@ -103,15 +102,10 @@ fun PaymentInfoScreen(
                 CustomTextField(
                     label = "Card Expiry",
                     text = cardExpiryDate,
-                    placeholder = "Enter Card Expiry",
+                    placeholder = "DD-MM-yyyy",
                     visualTransformation = DateVisualTransformation(),
                     keyboardType = KeyboardType.Number,
-                    onValueChange = {
-                        cardExpiryDate = it.take(maxCVV)
-                        if (it.length > maxCardNumber) {
-                            focusManager.moveFocus(FocusDirection.Down)
-                        }
-                    }) {
+                    onValueChange = { cardExpiryDate = it }) {
                     keyboardController?.hide()
                 }
 
@@ -120,7 +114,9 @@ fun PaymentInfoScreen(
                     text = cardCVV,
                     placeholder = "Enter Card CVV",
                     keyboardType = KeyboardType.Number,
-                    onValueChange = { cardCVV = it }) {
+                    onValueChange = {
+                        cardCVV = it.take(maxCVV)
+                    }) {
                     keyboardController?.hide()
                 }
 
@@ -133,7 +129,14 @@ fun PaymentInfoScreen(
                         .padding(horizontal = 20.dp),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-
+                        val paymentInfo = userProfile?.paymentInfo?.copy(
+                            cardNumber = cardNumber,
+                            cardHolderName = cardName,
+                            cardExpiryDate = cardExpiryDate,
+                            cardCVV = cardCVV
+                        )
+                        val updated = userProfile?.copy(paymentInfo = paymentInfo)
+                        profileViewModel.onEvent(PaymentInfoEvents.SaveCard(updated!!))
                     }) {
                     Text(text = "Save Card", style = MaterialTheme.typography.button)
                 }

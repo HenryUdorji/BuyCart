@@ -3,6 +3,7 @@ package com.hashconcepts.buycart.domain.usecases
 import com.hashconcepts.buycart.data.mapper.toUserProfile
 import com.hashconcepts.buycart.domain.model.UserProfile
 import com.hashconcepts.buycart.domain.repository.ProfileRepository
+import com.hashconcepts.buycart.presentation.screens.auth.ValidationResult
 import com.hashconcepts.buycart.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -51,12 +52,73 @@ class ProfileUseCase @Inject constructor(
         }
     }
 
-    fun updateUserProfile(userProfile: UserProfile): Flow<Resource<UserProfile>> = flow {
+    fun updateUserProfile(userProfile: UserProfile): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
             profileRepository.updateUserProfile(userProfile)
+            emit(Resource.Success(Unit))
         } catch (e: Exception) {
             emit(Resource.Error("Failed to update user profile"))
         }
+    }
+
+    companion object {
+        fun validatePaymentInfo(
+            cardNumber: String,
+            cardHolderName: String,
+            cardExpiry: String,
+            cardCVV: String,
+        ): ValidationResult {
+            if (cardNumber.isBlank() && cardHolderName.isBlank() && cardExpiry.isBlank() && cardCVV.isBlank()) {
+                return ValidationResult(
+                    successful = false,
+                    error =  "Please provide all fields."
+                )
+            }
+
+            if (cardNumber.isBlank()) {
+                return ValidationResult(
+                    successful = false,
+                    error = "Card Number field cannot be empty"
+                )
+            }
+
+            if (cardHolderName.isBlank()) {
+                return ValidationResult(
+                    successful = false,
+                    error = "CardHolder Name field cannot be empty"
+                )
+            }
+
+            if (cardExpiry.isBlank()) {
+                return ValidationResult(
+                    successful = false,
+                    error = "Card Expiry date field cannot be empty"
+                )
+            }
+
+            if (cardCVV.isBlank()) {
+                return ValidationResult(
+                    successful = false,
+                    error = "Card CVV field cannot be empty"
+                )
+            }
+
+            if (cardNumber.length < 15) {
+                return ValidationResult(
+                    successful = false,
+                    error = "Card Number is invalid"
+                )
+            }
+
+            if (cardCVV.length < 3) {
+                return ValidationResult(
+                    successful = false,
+                    error = "Card CVV field is invalid"
+                )
+            }
+            return ValidationResult(true)
+        }
+
     }
 }

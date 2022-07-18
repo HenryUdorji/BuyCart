@@ -25,8 +25,8 @@ data class UserProfile(
 )
 
 data class PaymentInfo(
-    val cardNo: String,
+    val cardNumber: String,
     val cardHolderName: String,
     val cardExpiryDate: String,
-    val cardCvv: String
+    val cardCVV: String
 )

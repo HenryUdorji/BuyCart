@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
+import com.hashconcepts.buycart.domain.model.UserProfile
 import com.hashconcepts.buycart.domain.usecases.ProfileUseCase
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
@@ -36,6 +37,43 @@ class ProfileViewModel @Inject constructor(
 
     init {
         getUserProfile()
+    }
+
+    fun onEvent(events: PaymentInfoEvents) {
+        when(events) {
+            is PaymentInfoEvents.SaveCard -> {
+                val paymentInfo = events.userProfile.paymentInfo
+
+                val result = ProfileUseCase.validatePaymentInfo(
+                    cardNumber = paymentInfo?.cardNumber ?: "",
+                    cardHolderName = paymentInfo?.cardHolderName ?: "",
+                    cardExpiry = paymentInfo?.cardExpiryDate ?: "",
+                    cardCVV = paymentInfo?.cardCVV ?: ""
+                )
+
+                if (result.successful) {
+                    savePaymentInfo(events.userProfile)
+                } else {
+                    viewModelScope.launch {
+                        eventChannel.send(UIEvents.ErrorEvent(result.error!!))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun savePaymentInfo(userProfile: UserProfile) {
+        profileUseCase.updateUserProfile(userProfile).onEach { result ->
+            when(result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    eventChannel.send(UIEvents.ErrorEvent(result.message!!))
+                }
+                is Resource.Success -> {
+                    eventChannel.send(UIEvents.SuccessEvent)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun logoutUser() = viewModelScope.launch {

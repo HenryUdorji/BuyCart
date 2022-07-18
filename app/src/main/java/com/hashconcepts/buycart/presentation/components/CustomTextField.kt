@@ -78,7 +78,7 @@ fun CustomTextField(
     }
 }
 
-class DateVisualTransformation: VisualTransformation {
+class DateVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val trimmed = if (text.text.length >= 8) text.text.substring(0..7) else text.text
         var output = ""
