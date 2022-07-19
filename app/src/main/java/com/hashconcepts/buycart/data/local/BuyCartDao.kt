@@ -14,7 +14,7 @@ import com.hashconcepts.buycart.domain.model.UserProfile
 @Dao
 interface BuyCartDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun saveUserProfile(userProfile: UserProfile)
 
     @Query("SELECT * FROM user_profile")

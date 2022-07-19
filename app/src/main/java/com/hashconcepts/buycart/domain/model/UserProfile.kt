@@ -1,9 +1,11 @@
 package com.hashconcepts.buycart.domain.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.hashconcepts.buycart.data.remote.dto.request.Address
 import com.hashconcepts.buycart.data.remote.dto.request.Name
+import kotlinx.parcelize.Parcelize
 
 /**
  * @created 28/06/2022 - 4:23 PM
@@ -24,9 +26,10 @@ data class UserProfile(
     val paymentInfo: PaymentInfo? = null,
 )
 
+@Parcelize
 data class PaymentInfo(
     val cardNumber: String,
     val cardHolderName: String,
     val cardExpiryDate: String,
     val cardCVV: String
-)
+): Parcelable

@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hashconcepts.buycart.data.local.SharedPrefUtil
-import com.hashconcepts.buycart.domain.model.UserProfile
+import com.hashconcepts.buycart.domain.model.PaymentInfo
 import com.hashconcepts.buycart.domain.usecases.ProfileUseCase
 import com.hashconcepts.buycart.utils.Resource
 import com.hashconcepts.buycart.utils.UIEvents
@@ -42,7 +42,7 @@ class ProfileViewModel @Inject constructor(
     fun onEvent(events: PaymentInfoEvents) {
         when(events) {
             is PaymentInfoEvents.SaveCard -> {
-                val paymentInfo = events.userProfile.paymentInfo
+                val paymentInfo = events.paymentInfo
 
                 val result = ProfileUseCase.validatePaymentInfo(
                     cardNumber = paymentInfo?.cardNumber ?: "",
@@ -52,7 +52,7 @@ class ProfileViewModel @Inject constructor(
                 )
 
                 if (result.successful) {
-                    savePaymentInfo(events.userProfile)
+                    savePaymentInfo(events.paymentInfo!!)
                 } else {
                     viewModelScope.launch {
                         eventChannel.send(UIEvents.ErrorEvent(result.error!!))
@@ -62,8 +62,10 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun savePaymentInfo(userProfile: UserProfile) {
-        profileUseCase.updateUserProfile(userProfile).onEach { result ->
+    private fun savePaymentInfo(paymentInfo: PaymentInfo) {
+        val userProfile = profileScreenState.userProfile?.copy(paymentInfo = paymentInfo)
+
+        profileUseCase.updateUserProfile(userProfile!!).onEach { result ->
             when(result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {

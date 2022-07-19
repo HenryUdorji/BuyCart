@@ -189,7 +189,7 @@ class ProductsViewModel @Inject constructor(
     private fun saveUserProfile(userProfile: UserProfile) {
         profileUseCase.saveUserProfile(userProfile).onEach { result ->
             if (!result) {
-                eventChannel.send(UIEvents.ErrorEvent("Failed to save user profile"))
+                //eventChannel.send(UIEvents.ErrorEvent("Failed to save user profile"))
             }
         }.launchIn(viewModelScope)
     }

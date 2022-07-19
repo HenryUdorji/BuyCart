@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -12,16 +13,27 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hashconcepts.buycart.R
+import com.hashconcepts.buycart.domain.model.PaymentInfo
+import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.presentation.components.CustomTextField
 import com.hashconcepts.buycart.presentation.components.DateVisualTransformation
+import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
+import com.hashconcepts.buycart.presentation.screens.home.productDetail.ProductDetailScreenState
 import com.hashconcepts.buycart.ui.theme.backgroundColor
+import com.hashconcepts.buycart.ui.theme.primaryColor
+import com.hashconcepts.buycart.ui.theme.secondaryColor
+import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 /**
  * @created 17/07/2022 - 5:23 PM
@@ -33,6 +45,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun PaymentInfoScreen(
     navigator: DestinationsNavigator,
+    paymentInfo: PaymentInfo?,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
@@ -42,22 +55,42 @@ fun PaymentInfoScreen(
     }
 
     val scaffoldState = rememberScaffoldState()
-    val userProfile = profileViewModel.profileScreenState.userProfile
-    val paymentInfo = userProfile?.paymentInfo
+
+    LaunchedEffect(key1 = true) {
+        profileViewModel.eventChannelFlow.collectLatest { uiEvents ->
+            when (uiEvents) {
+                is UIEvents.ErrorEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        uiEvents.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                is UIEvents.SuccessEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        "Payment Information saved",
+                        duration = SnackbarDuration.Short
+                    )
+//                    navigator.popBackStack()
+//                    navigator.navigate(LoginScreenDestination)
+
+//                                val openDialog = remember { mutableStateOf(true) }
+//                                if (openDialog.value) {
+//                                    CustomAlertDialog(onDismissRequest = {
+//                                        openDialog.value = false
+//                                        navigator.popBackStack()
+//                                        navigator.navigate(LoginScreenDestination)
+//                                    })
+                }
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
         backgroundColor = backgroundColor
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = "Credit/Debit Card",
-                style = MaterialTheme.typography.h1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                textAlign = TextAlign.Center
-            )
+            ToolbarSection { navigator.navigateUp() }
 
             Column(
                 modifier = Modifier
@@ -129,19 +162,44 @@ fun PaymentInfoScreen(
                         .padding(horizontal = 20.dp),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        val paymentInfo = userProfile?.paymentInfo?.copy(
+                        val payInfo = paymentInfo?.copy(
                             cardNumber = cardNumber,
                             cardHolderName = cardName,
                             cardExpiryDate = cardExpiryDate,
                             cardCVV = cardCVV
                         )
-                        val updated = userProfile?.copy(paymentInfo = paymentInfo)
-                        profileViewModel.onEvent(PaymentInfoEvents.SaveCard(updated!!))
+                        profileViewModel.onEvent(PaymentInfoEvents.SaveCard(payInfo))
                     }) {
                     Text(text = "Save Card", style = MaterialTheme.typography.button)
                 }
             }
         }
     }
+}
 
+@Composable
+fun ToolbarSection(onNavigateUp: () -> Unit, ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+    ) {
+        IconButton(onClick = onNavigateUp) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back),
+                contentDescription = null
+            )
+        }
+
+        Text(
+            text = "Credit/Debit Card",
+            style = MaterialTheme.typography.h1,
+            modifier = Modifier
+                .fillMaxWidth().weight(1f)
+                .padding(vertical = 10.dp),
+            textAlign = TextAlign.Center
+        )
+    }
 }

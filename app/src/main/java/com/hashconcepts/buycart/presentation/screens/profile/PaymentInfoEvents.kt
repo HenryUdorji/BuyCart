@@ -1,5 +1,6 @@
 package com.hashconcepts.buycart.presentation.screens.profile
 
+import com.hashconcepts.buycart.domain.model.PaymentInfo
 import com.hashconcepts.buycart.domain.model.UserProfile
 
 /**
@@ -8,5 +9,5 @@ import com.hashconcepts.buycart.domain.model.UserProfile
  * @author  ifechukwu.udorji
  */
 sealed class PaymentInfoEvents {
-    data class SaveCard(val userProfile: UserProfile): PaymentInfoEvents()
+    data class SaveCard(val paymentInfo: PaymentInfo?): PaymentInfoEvents()
 }

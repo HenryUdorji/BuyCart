@@ -110,7 +110,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(25.dp))
 
                 ProfileItem(icon = R.drawable.ic_card, title = "Payment Information") {
-                    navigator.navigate(PaymentInfoScreenDestination)
+                    navigator.navigate(PaymentInfoScreenDestination(state.userProfile?.paymentInfo))
                 }
 
                 Spacer(modifier = Modifier.height(25.dp))
