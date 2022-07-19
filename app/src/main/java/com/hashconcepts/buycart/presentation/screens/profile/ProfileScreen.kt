@@ -134,6 +134,7 @@ fun ProfileHeaderSection(userProfile: UserProfile?) {
             model = userProfile?.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = R.drawable.placeholder_image),
             modifier = Modifier
                 .clip(CircleShape)
                 .size(60.dp)
