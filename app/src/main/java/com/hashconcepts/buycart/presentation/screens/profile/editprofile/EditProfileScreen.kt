@@ -137,15 +137,8 @@ fun FormContentSection(
             .height(50.dp)
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(10.dp),
-        onClick = {
-//            val payInfo = paymentInfo?.copy(
-//                cardNumber = cardNumber,
-//                cardHolderName = cardName,
-//                cardExpiryDate = cardExpiryDate,
-//                cardCVV = cardCVV
-//            )
-//            profileViewModel.onEvent(PaymentInfoEvents.SaveCard(payInfo))
-        }) {
+        onClick = {}
+    ) {
         Text(text = "Update Profile", style = MaterialTheme.typography.button)
     }
 }

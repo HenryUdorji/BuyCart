@@ -49,7 +49,7 @@ fun AddressScreen(
         backgroundColor = backgroundColor
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            CustomToolbar(title = "Edit Address") { navigator.navigateUp() }
+            CustomToolbar(title = "Address") { navigator.navigateUp() }
 
             Column(
                 modifier = Modifier
@@ -131,15 +131,8 @@ fun FormContentSection(
             .height(50.dp)
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(10.dp),
-        onClick = {
-//            val payInfo = paymentInfo?.copy(
-//                cardNumber = cardNumber,
-//                cardHolderName = cardName,
-//                cardExpiryDate = cardExpiryDate,
-//                cardCVV = cardCVV
-//            )
-//            profileViewModel.onEvent(PaymentInfoEvents.SaveCard(payInfo))
-        }) {
+        onClick = {}
+    ) {
         Text(text = "Update Address", style = MaterialTheme.typography.button)
     }
 }
