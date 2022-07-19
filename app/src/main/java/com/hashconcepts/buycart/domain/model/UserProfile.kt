@@ -14,6 +14,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Entity(tableName = "user_profile")
+@Parcelize
 data class UserProfile(
     @PrimaryKey
     val email: String,
@@ -24,7 +25,7 @@ data class UserProfile(
     val name: Name,
     val address: Address,
     val paymentInfo: PaymentInfo? = null,
-)
+): Parcelable
 
 @Parcelize
 data class PaymentInfo(

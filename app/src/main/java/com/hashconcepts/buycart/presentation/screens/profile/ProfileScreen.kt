@@ -25,10 +25,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.domain.model.UserProfile
-import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
-import com.hashconcepts.buycart.presentation.screens.destinations.PaymentInfoScreenDestination
-import com.hashconcepts.buycart.presentation.screens.destinations.ProfileScreenDestination
-import com.hashconcepts.buycart.presentation.screens.destinations.WelcomeScreenDestination
+import com.hashconcepts.buycart.presentation.screens.destinations.*
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
 import com.hashconcepts.buycart.utils.UIEvents
@@ -99,18 +96,25 @@ fun ProfileScreen(
                     .background(Color.White)
                     .padding(20.dp)
             ) {
-                ProfileHeaderSection(state.userProfile)
+                ProfileHeaderSection(state.userProfile) {
+                    navigator.navigate(EditProfileScreenDestination(state.userProfile!!))
+                }
 
                 Spacer(modifier = Modifier.height(50.dp))
 
                 ProfileItem(icon = R.drawable.ic_cart, title = "My Order") {
-
                 }
 
                 Spacer(modifier = Modifier.height(25.dp))
 
                 ProfileItem(icon = R.drawable.ic_card, title = "Payment Information") {
                     navigator.navigate(PaymentInfoScreenDestination(state.userProfile?.paymentInfo))
+                }
+
+                Spacer(modifier = Modifier.height(25.dp))
+
+                ProfileItem(icon = R.drawable.ic_location, title = "Address") {
+                    navigator.navigate(AddressScreenDestination(state.userProfile?.address!!))
                 }
 
                 Spacer(modifier = Modifier.height(25.dp))
@@ -124,7 +128,10 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileHeaderSection(userProfile: UserProfile?) {
+fun ProfileHeaderSection(
+    userProfile: UserProfile?,
+    onEditProfileClicked: () -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -160,6 +167,7 @@ fun ProfileHeaderSection(userProfile: UserProfile?) {
                 .background(backgroundColor)
                 .size(40.dp)
                 .padding(5.dp)
+                .clickable { onEditProfileClicked() }
         ) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = null)
         }

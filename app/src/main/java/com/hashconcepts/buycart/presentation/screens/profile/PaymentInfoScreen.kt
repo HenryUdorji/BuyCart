@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -13,27 +12,19 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hashconcepts.buycart.R
 import com.hashconcepts.buycart.domain.model.PaymentInfo
-import com.hashconcepts.buycart.presentation.components.CircularProgress
 import com.hashconcepts.buycart.presentation.components.CustomTextField
+import com.hashconcepts.buycart.presentation.components.CustomToolbar
 import com.hashconcepts.buycart.presentation.components.DateVisualTransformation
-import com.hashconcepts.buycart.presentation.screens.destinations.LoginScreenDestination
-import com.hashconcepts.buycart.presentation.screens.home.productDetail.ProductDetailScreenState
 import com.hashconcepts.buycart.ui.theme.backgroundColor
-import com.hashconcepts.buycart.ui.theme.primaryColor
-import com.hashconcepts.buycart.ui.theme.secondaryColor
 import com.hashconcepts.buycart.utils.UIEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 
 /**
  * @created 17/07/2022 - 5:23 PM
@@ -90,7 +81,7 @@ fun PaymentInfoScreen(
         backgroundColor = backgroundColor
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ToolbarSection { navigator.navigateUp() }
+            CustomToolbar(title = "Credit/Debit Card") { navigator.navigateUp() }
 
             Column(
                 modifier = Modifier
@@ -99,107 +90,89 @@ fun PaymentInfoScreen(
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                     .background(Color.White)
             ) {
-                val focusManager = LocalFocusManager.current
-                val keyboardController = LocalSoftwareKeyboardController.current
-                var cardNumber by remember { mutableStateOf(paymentInfo?.cardNumber ?: "") }
-                var cardName by remember { mutableStateOf(paymentInfo?.cardHolderName ?: "") }
-                var cardExpiryDate by remember { mutableStateOf(paymentInfo?.cardExpiryDate ?: "") }
-                var cardCVV by remember { mutableStateOf(paymentInfo?.cardCVV ?: "") }
-
-                val maxCVV = 3
-                val maxCardNumber = 16
-
-
-                CustomTextField(
-                    label = "Card Number",
-                    text = cardNumber,
-                    placeholder = "Enter Card Number",
-                    keyboardType = KeyboardType.Number,
-                    onValueChange = {
-                        cardNumber = it.take(maxCardNumber)
-                        if (it.length > maxCardNumber) {
-                            focusManager.moveFocus(FocusDirection.Down)
-                        }
-                    }) {
-                    keyboardController?.hide()
-                }
-
-                CustomTextField(
-                    label = "CardHolder Name",
-                    text = cardName,
-                    placeholder = "Enter CardHolder Name",
-                    onValueChange = { cardName = it }) {
-                    keyboardController?.hide()
-                }
-
-                CustomTextField(
-                    label = "Card Expiry",
-                    text = cardExpiryDate,
-                    placeholder = "DD-MM-yyyy",
-                    visualTransformation = DateVisualTransformation(),
-                    keyboardType = KeyboardType.Number,
-                    onValueChange = { cardExpiryDate = it }) {
-                    keyboardController?.hide()
-                }
-
-                CustomTextField(
-                    label = "Card CVV",
-                    text = cardCVV,
-                    placeholder = "Enter Card CVV",
-                    keyboardType = KeyboardType.Number,
-                    onValueChange = {
-                        cardCVV = it.take(maxCVV)
-                    }) {
-                    keyboardController?.hide()
-                }
-
-                Spacer(modifier = Modifier.height(50.dp))
-
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(horizontal = 20.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    onClick = {
-                        val payInfo = paymentInfo?.copy(
-                            cardNumber = cardNumber,
-                            cardHolderName = cardName,
-                            cardExpiryDate = cardExpiryDate,
-                            cardCVV = cardCVV
-                        )
-                        profileViewModel.onEvent(PaymentInfoEvents.SaveCard(payInfo))
-                    }) {
-                    Text(text = "Save Card", style = MaterialTheme.typography.button)
-                }
+                FormContentSection(paymentInfo, profileViewModel)
             }
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ToolbarSection(onNavigateUp: () -> Unit, ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+fun FormContentSection(
+    paymentInfo: PaymentInfo?,
+    profileViewModel: ProfileViewModel
+) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var cardNumber by remember { mutableStateOf(paymentInfo?.cardNumber ?: "") }
+    var cardName by remember { mutableStateOf(paymentInfo?.cardHolderName ?: "") }
+    var cardExpiryDate by remember { mutableStateOf(paymentInfo?.cardExpiryDate ?: "") }
+    var cardCVV by remember { mutableStateOf(paymentInfo?.cardCVV ?: "") }
+
+    val maxCVV = 3
+    val maxCardNumber = 16
+
+
+    CustomTextField(
+        label = "Card Number",
+        text = cardNumber,
+        placeholder = "Enter Card Number",
+        keyboardType = KeyboardType.Number,
+        onValueChange = {
+            cardNumber = it.take(maxCardNumber)
+            if (it.length > maxCardNumber) {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        }) {
+        keyboardController?.hide()
+    }
+
+    CustomTextField(
+        label = "CardHolder Name",
+        text = cardName,
+        placeholder = "Enter CardHolder Name",
+        onValueChange = { cardName = it }) {
+        keyboardController?.hide()
+    }
+
+    CustomTextField(
+        label = "Card Expiry",
+        text = cardExpiryDate,
+        placeholder = "DD-MM-yyyy",
+        visualTransformation = DateVisualTransformation(),
+        keyboardType = KeyboardType.Number,
+        onValueChange = { cardExpiryDate = it }) {
+        keyboardController?.hide()
+    }
+
+    CustomTextField(
+        label = "Card CVV",
+        text = cardCVV,
+        placeholder = "Enter Card CVV",
+        keyboardType = KeyboardType.Number,
+        onValueChange = {
+            cardCVV = it.take(maxCVV)
+        }) {
+        keyboardController?.hide()
+    }
+
+    Spacer(modifier = Modifier.height(50.dp))
+
+    Button(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-    ) {
-        IconButton(onClick = onNavigateUp) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = null
+            .height(50.dp)
+            .padding(horizontal = 20.dp),
+        shape = RoundedCornerShape(10.dp),
+        onClick = {
+            val payInfo = paymentInfo?.copy(
+                cardNumber = cardNumber,
+                cardHolderName = cardName,
+                cardExpiryDate = cardExpiryDate,
+                cardCVV = cardCVV
             )
-        }
-
-        Text(
-            text = "Credit/Debit Card",
-            style = MaterialTheme.typography.h1,
-            modifier = Modifier
-                .fillMaxWidth().weight(1f)
-                .padding(vertical = 10.dp),
-            textAlign = TextAlign.Center
-        )
+            profileViewModel.onEvent(PaymentInfoEvents.SaveCard(payInfo))
+        }) {
+        Text(text = "Save Card", style = MaterialTheme.typography.button)
     }
 }
