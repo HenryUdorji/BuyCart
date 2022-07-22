@@ -22,6 +22,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hashconcepts.buycart.data.mapper.toProduct
 import com.hashconcepts.buycart.presentation.components.CheckoutBottomSheetDialog
 import com.hashconcepts.buycart.presentation.components.WishListOrderContainer
+import com.hashconcepts.buycart.presentation.screens.destinations.OrderScreenDestination
 import com.hashconcepts.buycart.presentation.screens.destinations.ProductDetailScreenDestination
 import com.hashconcepts.buycart.ui.theme.backgroundColor
 import com.hashconcepts.buycart.ui.theme.disableColor
@@ -156,6 +157,7 @@ fun CartScreen(
             checkoutState = cartsViewModel.checkoutState
         ) {
             scope.launch {
+                navigator.navigate(OrderScreenDestination)
                 bottomSheetState.hide()
             }
         }
